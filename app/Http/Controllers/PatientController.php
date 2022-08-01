@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChronicDisease;
+use App\Models\Hospital;
 use App\Models\Patient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +19,9 @@ class PatientController extends Controller
 
     public function create()
     {
-        return view('patients.add');
+        $hospitals = Hospital::all();
+        $chronic_diseases = ChronicDisease::all();
+        return view('patients.add', compact('hospitals', 'chronic_diseases'));
     }
 
     public function view_api(){
@@ -40,7 +44,6 @@ class PatientController extends Controller
             'chronic_disease.*' => 'required|string',
         ];
         $request->validate($rules);
-
 
         $patient = new Patient();
         $patient->name = $request->name;
@@ -111,10 +114,12 @@ class PatientController extends Controller
 
             $patient->national_id_photo_back = $name;
         }
-        //chronic_disease
-
         $patient->save();
-        foreach ($request->chronic_disease as $disease) {
+
+        //chronic_disease
+        $chronic_diseases = implode(',', $request->chronic_disease);
+        $chronic_diseases = explode(',', $chronic_diseases);
+        foreach ($chronic_diseases  as $disease) {
             $chronic_disease = \App\Models\ChronicDisease::where('name', $disease)->first();
             if (!$chronic_disease) {
                 $chronic_disease = new \App\Models\ChronicDisease();
@@ -124,7 +129,7 @@ class PatientController extends Controller
             }
             $patient->chronic_diseases()->attach($chronic_disease->id);
         }
-        return redirect()->route('patients.index')->with('success', __('Patient added successfully'));
+        return redirect()->route('dashboard.patients')->with('success', __('Patient added successfully'));
     }
 
     public function add_api(Request $request){

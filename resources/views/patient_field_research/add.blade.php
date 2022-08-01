@@ -271,14 +271,14 @@
                                
                                 <input type="checkbox" class="peer" 
                                  {{-- If there's additional item than the items in $income_source then it's an extra item, so we check "Other" option --}}
-                                {{ count(array_diff(explode(',',$field_research->income_source)??[],$income_sources))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->income_source??null)??[],$income_sources))>0 && $field_research != null)?"checked":"" }} 
                                 value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 
                                 <input type="text" 
                                  {{-- Get the extra items --}}
-                                value="{{ implode(',',array_diff(explode(',',$field_research->income_source)??[],$income_sources)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->income_source??null)??[],$income_sources)) }}" 
                                 id="income_source" name="income_source[]" placeholder="اذكر مصدر الدخل" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                             </label> <br>
                         </div>
@@ -343,18 +343,18 @@
                             @endphp
                             @foreach ($symptoms as $symptom)
                                 <label > 
-                                <input type="checkbox" {{ in_array($symptom,$selected_symptoms)?"checked":"" }} value="{{ $symptom }}" name="symptoms[]">
+                                <input type="checkbox" {{ in_array($symptom,$selected_symptoms??null)?"checked":"" }} value="{{ $symptom }}" name="symptoms[]">
                                 {{ $symptom }}
                             </label> <br>
                             @endforeach
                             <label > 
                                 <input type="checkbox" 
-                                {{ count(array_diff(explode(',',$field_research->symptoms)??[],$symptoms))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->symptoms??null)??[],$symptoms))>0 && $field_research != null)?"checked":"" }} 
                                 class="peer" value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 <input type="text"  
-                                value="{{ implode(',',array_diff(explode(',',$field_research->symptoms)??[],$symptoms)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->symptoms??null)??[],$symptoms)) }}" 
                                 
                                 id="" name="symptoms[]" placeholder="" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                             </label> <br>
@@ -376,18 +376,18 @@
                             @endphp
                             @foreach ($medications as $medication)
                                 <label > 
-                                <input type="checkbox" {{ in_array($medication,$selected_medications)?"checked":"" }} value="{{ $medication }}" name="medication[]">
+                                <input type="checkbox" {{ in_array($medication,$selected_medications??null)?"checked":"" }} value="{{ $medication }}" name="medication[]">
                                 {{ $medication }}
                             </label> <br>
                             @endforeach
                             <label > 
                                 <input type="checkbox" 
-                                {{ count(array_diff(explode(',',$field_research->medications)??[],$medications))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->medications??null)??[],$medications))>0 && $field_research != null)?"checked":"" }} 
                                 class="peer" value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 <input type="text"  
-                                value="{{ implode(',',array_diff(explode(',',$field_research->medications)??[],$medications)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->medications??null)??[],$medications)) }}" 
                                 
                                 id="" name="medication[]" placeholder="" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm
                                 text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
@@ -419,12 +419,12 @@
                             @endforeach
                             <label > 
                                 <input type="checkbox" 
-                                {{ count(array_diff(explode(',',$field_research->other_chronic_diseases)??[],$chronic_diseases))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->other_chronic_diseases??null)??[],$chronic_diseases))>0 && $field_research != null)?"checked":"" }} 
                                 class="peer" value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 <input type="text"  
-                                value="{{ implode(',',array_diff(explode(',',$field_research->other_chronic_diseases)??[],$chronic_diseases)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->other_chronic_diseases??null)??[],$chronic_diseases)) }}" 
                                 
                                 id="" name="chronic_diseases[]" placeholder="" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm
                                 text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
@@ -445,7 +445,7 @@
                                     'مستوصف',
                                     'عيادة خاصة',
                                 ];
-                                $selected_hospital =  $field_research->visiting_hospital;
+                                $selected_hospital =  $field_research->visiting_hospital??null;
                             @endphp
                             @foreach ($hospitals as $hospital)
                                 <label > 
@@ -455,7 +455,7 @@
                             @endforeach
                             <label> 
                                 <input type="radio" 
-                                {{ !in_array($selected_hospital, $hospitals)?"checked":"" }}  name="hospital"
+                                {{ (!in_array($selected_hospital, $hospitals) && $field_research != null)?"checked":"" }}  name="hospital"
                                 class="peer"  value="اخري تذكر">
                                  اخري تذكر
                                  <br>
@@ -491,12 +491,12 @@
                             @endforeach
                             <label > 
                                 <input type="checkbox" 
-                                {{ count(array_diff(explode(',',$field_research->costs_of_treatment)??[],$costs_of_treatment))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->costs_of_treatment??null)??[],$costs_of_treatment))>0 && $field_research != null)?"checked":"" }} 
                                 class="peer" value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 <input type="text"  
-                                value="{{ implode(',',array_diff(explode(',',$field_research->costs_of_treatment)??[],$costs_of_treatment)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->costs_of_treatment??null)??[],$costs_of_treatment)) }}" 
                                 id="" name="costs_of_treatment[]" placeholder="" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm
                                 text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                             </label> <br>
@@ -507,7 +507,7 @@
                     <div class="flex flex-wrap md:flex-nowrap">
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                             <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
-                                <input type="text" datepicker datepicker-format="yyyy-mm-dd" value="{{ $field_research->last_visit_date?date('Y-m-d',strtotime($field_research->last_visit_date)):null }}" id="last_visit_date" name="last_visit_date" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                                <input type="text" datepicker datepicker-format="yyyy-mm-dd" value="{{ ($field_research->last_visit_date??null)?date('Y-m-d',strtotime($field_research->last_visit_date)):null }}" id="last_visit_date" name="last_visit_date" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
                                 <label for="last_visit_date" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform  bg-white -translate-y-4 scale-75 top-2 z-10 origin-[0] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('When was the last time you visited your doctor?') }}</label>
                             </div>
                         </div>
@@ -530,18 +530,18 @@
                             
                             @foreach ($heared_about_initiative as $heared)
                                 <label > 
-                                <input type="checkbox" {{ in_array($heared,$selected_heared_about_initiative)?"checked":"" }} value="{{ $heared }}" name="heared_about_initiative[]">
+                                <input type="checkbox" {{ in_array($heared,$selected_heared_about_initiative??null)?"checked":"" }} value="{{ $heared }}" name="heared_about_initiative[]">
                                 {{ $heared }}
                                 </label> <br>
                             @endforeach
                             <label > 
                                 <input type="checkbox" 
-                                {{ count(array_diff(explode(',',$field_research->heared_about_initiative)??[],$heared_about_initiative))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->heared_about_initiative??null)??[],$heared_about_initiative))>0 && $field_research != null)?"checked":"" }} 
                                 class="peer" value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 <input type="text"  
-                                value="{{ implode(',',array_diff(explode(',',$field_research->heared_about_initiative)??[],$heared_about_initiative)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->heared_about_initiative??null)??[],$heared_about_initiative)) }}" 
                                 id="" name="heared_about_initiative[]" placeholder="" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm
                                 text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                             </label> <br>
@@ -569,12 +569,12 @@
                             @endforeach
                             <label > 
                                 <input type="checkbox" 
-                                {{ count(array_diff(explode(',',$field_research->heared_about_organization)??[],$heared_about_organization))>0?"checked":"" }} 
+                                {{ (count(array_diff(explode(',',$field_research->heared_about_organization??null)??[],$heared_about_organization))>0 && $field_research != null)?"checked":"" }} 
                                 class="peer" value="اخري تذكر">
                                  اخري تذكر
                                  <br>
                                 <input type="text"  
-                                value="{{ implode(',',array_diff(explode(',',$field_research->heared_about_organization)??[],$heared_about_organization)) }}" 
+                                value="{{ implode(',',array_diff(explode(',',$field_research->heared_about_organization??null)??[],$heared_about_organization)) }}" 
                                 id="" name="heared_about_organization[]" placeholder="" class="hidden mt-2 peer-checked:block px-2.5 pb-2.5 pt-4 w-full text-sm
                                 text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" />
                             </label> <br>

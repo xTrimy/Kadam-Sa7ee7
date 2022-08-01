@@ -825,5 +825,7 @@
     "Photo of patient's house/place":"صورة من منزل/مكان المريض",
     "Field Research":"بحث ميداني",
     "Data has been recorded successfully":"تم تسجيل البيانات بنجاح",
-    "Dismiss":"تجاهل"
+    "Dismiss":"تجاهل",
+    "Select Hospital":"أختر المستشفى",
+    "Patient's Address":"عنوان المريض"
 }

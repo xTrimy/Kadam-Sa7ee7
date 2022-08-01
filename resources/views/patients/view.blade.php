@@ -25,7 +25,8 @@
             <input type="text" id="table-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 ltr:pl-10 rtl:pr-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Search for') . ' ' . __('Patients') }}">
         </div>
     </div>
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <div class="">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-auto ">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="p-4">
@@ -88,14 +89,24 @@
                             },$patient->chronic_diseases->toArray()),', ') }}
                 </td>
                 <td class="py-4 px-6 text-right">
-                    <a href="#" class="font-medium px-4 py-2 border-primary-dark border rounded-full text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Edit') }}</a>
-                    <a href="{{ route('dashboard.patients.field_research.create',$patient->id) }}" class="font-medium px-4 py-2 border-primary-dark border rounded-full text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Field Research') }}</a>
-                    <a href="#" class="font-medium px-4 py-2 border-primary-dark border rounded-full text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Details') }}</a>
+                    <div class="flex items-center justify-center">
+                        <a href="#">
+                        <div href="#" class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Edit') }}</div>
+                        </a>
+                        <a href="{{ route('dashboard.patients.field_research.create',$patient->id) }}">
+                            <div  class="text-center break whitespace-nowrap font-medium px-4 py-2 border-primary-dark border rounded-full text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Field Research') }}</div>
+                        </a>
+                        <a href="#">
+                        <div  class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Details') }}</div>
+                        </a>
+                    </div>
                 </td>
             </tr>
             @endforeach
             
         </tbody>
+    </div>
+
     </table>
 </div>
 

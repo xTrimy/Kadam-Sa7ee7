@@ -29,7 +29,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
     Route::prefix('/patients')->as('.patients')->group(function(){
         Route::get('/', [PatientController::class, 'index']);
         Route::get('/create', [PatientController::class, 'create'])->name('.create');
-        Route::post('/store', [PatientController::class, 'store'])->name('.store');
+        Route::post('/create', [PatientController::class, 'store'])->name('.store');
         Route::get('/{id}/edit', [PatientController::class, 'edit'])->name('.edit');
         Route::put('/{id}/update', [PatientController::class, 'update'])->name('.update');
         Route::delete('/{id}/delete', [PatientController::class, 'delete'])->name('.delete');
