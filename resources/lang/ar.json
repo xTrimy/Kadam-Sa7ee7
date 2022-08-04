@@ -827,5 +827,9 @@
     "Data has been recorded successfully":"تم تسجيل البيانات بنجاح",
     "Dismiss":"تجاهل",
     "Select Hospital":"أختر المستشفى",
-    "Patient's Address":"عنوان المريض"
+    "Patient's Address":"عنوان المريض",
+    "Add Hospital":"أضافة مستشفى",
+    "Hospital's Name":"أسم المستشفى",
+    "Hospitals":"المستشفيات",
+    "Patients Count":"عدد المرضى"
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientFieldResearchController;
@@ -37,5 +38,13 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
             Route::get('/', [PatientFieldResearchController::class, 'create'])->name('.create');
             Route::post('/', [PatientFieldResearchController::class, 'store'])->name('.create');
         });
+    });
+    Route::prefix('/hospitals')->as('.hospitals')->group(function(){
+        Route::get('/', [HospitalController::class, 'index']);
+        Route::get('/create', [HospitalController::class, 'create'])->name('.create');
+        Route::post('/create', [HospitalController::class, 'store'])->name('.store');
+        Route::get('/{id}/edit', [HospitalController::class, 'edit'])->name('.edit');
+        Route::put('/{id}/update', [HospitalController::class, 'update'])->name('.update');
+        Route::delete('/{id}/delete', [HospitalController::class, 'delete'])->name('.delete');
     });
 });
