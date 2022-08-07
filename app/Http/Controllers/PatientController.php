@@ -10,11 +10,16 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
 
+
 class PatientController extends Controller
 {
     public function index(){
         $patients = Patient::with(['chronic_diseases','hospital'])->paginate('15');
         return view('patients.view',compact('patients'));
+    }
+    public function view_single($id){
+        $patient = Patient::with(['chronic_diseases','hospital','user'])->findOrFail($id);
+        return view('patients.single',compact('patient'));
     }
 
     public function create()
@@ -130,6 +135,12 @@ class PatientController extends Controller
             $patient->chronic_diseases()->attach($chronic_disease->id);
         }
         return redirect()->route('dashboard.patients')->with('success', __('Patient added successfully'));
+    }
+
+    public function search(Request $request){
+        $keyword = $request->q;
+        $patients = Patient::with(['chronic_diseases','hospital'])->where('name', 'like', '%' . $keyword . '%')->orWhere('phone', 'like', '%' . $keyword . '%')->orWhere('national_id', 'like', '%' . $keyword . '%')->get();
+        return view('patients.view', compact('patients'));
     }
 
     public function add_api(Request $request){
@@ -308,4 +319,15 @@ class PatientController extends Controller
     }
 
 
+    public function download_patient_data($id){
+        $patient =  Patient::with(['field_research','chronic_diseases','hospital','records.user'])->find($id);
+        $pdf = \PDF::loadView('pdf.patient-report', ['patient' => $patient]);
+        return $pdf->download("patient-report-$id.pdf");
+    }
+
+    public function download_patient_data_t($id)
+    {
+        $patient =  Patient::with(['field_research','chronic_diseases','hospital','records.user'])->find($id);
+        return view('pdf.patient-report', compact('patient'));
+    }
 }

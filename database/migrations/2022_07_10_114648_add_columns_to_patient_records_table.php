@@ -16,7 +16,7 @@ class AddColumnsToPatientRecordsTable extends Migration
         Schema::table('patient_records', function (Blueprint $table) {
             $table->date('operation_date')->nullable();
             $table->boolean('is_checked')->default(false);
-            $table->foreignId('checked_by')->nullable()->constrained('users')->onDelete('set null')->onUpdate('set null');
+            $table->string('checked_by')->nullable();
             $table->boolean('supplied')->default(false);
         });
     }

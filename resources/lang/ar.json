@@ -831,5 +831,21 @@
     "Add Hospital":"أضافة مستشفى",
     "Hospital's Name":"أسم المستشفى",
     "Hospitals":"المستشفيات",
-    "Patients Count":"عدد المرضى"
+    "Patients Count":"عدد المرضى",
+    "None":"لا شيء",
+    "Patient File":"ملف المريض",
+    "Registration Date":"تاريخ التسجيل",
+    "Registered by":"مسجل بواسطة",
+    "Add New Record":"أضافة تقرير جديد",
+    "Download PDF":"تحميل الملف",
+    "Record Photo/Patient Status Picture":"صورة تقرير المريض/صورة حالة المريض",
+    "Add Patient Record":"أضافة تقرير المريض",
+    "Record Type":"نوع التقرير",
+    "Record Date/Visit Date":"تاريخ التقرير/تاريخ الزيارة",
+    "Operation Date":"تاريخ العملية",
+    "Record Description":"وصف التقرير",
+    "Patient Checked?":"تم فحص المريض؟",
+    "Checked By (Doctor Name)":"تم الفحص بواسطة (أسم الطبيب)",
+    "Patient received medical supplies?":"تم استلام المريض المستلزمات الطبية؟",
+    "I acknowledge that I checked the data carefully before saving":"انا أقر اني راجعت البيانات بعناية قبل الحفظ"
 }

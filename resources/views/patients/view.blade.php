@@ -7,24 +7,30 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <h1 class="p-6 text-xl bg-white border-b border-gray-200">
-                    {{ __('Patients') }} <br>
-                    <p class="text-sm mt-4">
-                    {{ __('Total Count') }} : {{ $patients->count() }}
-                    </p>
-                </h1>
+                <div class="flex justify-between p-6 bg-white border-b border-gray-200">
+                    <h1 class="text-xl">
+                        {{ __('Patients') }} <br>
+                        <p class="text-sm mt-4">
+                        {{ __('Total Count') }} : {{ $patients->count() }}
+                        </p>
+                    </h1>
+                     <a href="{{ route('dashboard.patients.create') }}">
+                        <button type="button" class="text-white bg-primary-light hover:bg-primary-dark focus:ring-4 focus:ring-primary-light font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 ">{{ __('Add') }}</button>
+                    </a>
+                </div>
 
                 <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-    <div class="p-4">
+    <form method="GET" action="{{ route('dashboard.patients.search') }}" class="p-4">
         <label for="table-search" class="sr-only">{{ __('Search') }}</label>
         <div class="relative mt-1">
             <div class="flex absolute inset-y-0 ltr:left-0 rtl:right-0 items-center ltr:pl-3 rtl:pr-3 pointer-events-none">
                 <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
             </div>
-            <input type="text" id="table-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 ltr:pl-10 rtl:pr-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Search for') . ' ' . __('Patients') }}">
+            <input type="text" name="q" id="table-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 ltr:pl-10 rtl:pr-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="{{ __('Search for') . ' ' . __('Patients') }}">
         </div>
-    </div>
+    </form>
     <div class="">
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-auto ">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -75,18 +81,11 @@
                     {{ $patient->hospital->name }}
                 </td>
                 <td class="py-4 px-6">
-                    @php
-                        // calculate age from birth date
-                        $diff = abs(strtotime(date('Y-m-d')) - strtotime($patient->birth_date));
-                        $age = floor($diff / (365*60*60*24));
-                        
-                    @endphp
-                    {{ $age }}
+                   
+                    {{ $patient->getAge(); }}
                 </td>
                 <td class="py-4 px-6">
-                    {{ implode(array_map(function($value){
-                                return $value["name"];
-                            },$patient->chronic_diseases->toArray()),', ') }}
+                    {{ strlen($patient->displayChronicDiseases()) > 0 ? $patient->displayChronicDiseases(): __('None')  }}
                 </td>
                 <td class="py-4 px-6 text-right">
                     <div class="flex items-center justify-center">
@@ -96,7 +95,7 @@
                         <a href="{{ route('dashboard.patients.field_research.create',$patient->id) }}">
                             <div  class="text-center break whitespace-nowrap font-medium px-4 py-2 border-primary-dark border rounded-full text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Field Research') }}</div>
                         </a>
-                        <a href="#">
+                        <a href="{{ route('dashboard.patientsview_single',$patient->id) }}">
                         <div  class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Details') }}</div>
                         </a>
                     </div>

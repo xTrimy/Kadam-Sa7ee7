@@ -8,11 +8,9 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-
                 <h1 class="p-6 text-xl bg-white border-b border-gray-200">
                     {{ __('Add Hospital') }} <br>
                 </h1>
-
                 <form action="" method="POST" enctype="multipart/form-data" class="px-8 py-16">
                     @if(Session::has('success'))
                     <div id="alert-3" class="flex p-4 mb-4 bg-green-100 rounded-lg dark:bg-green-200" role="alert">
@@ -41,7 +39,6 @@
                             <label for="address" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Address') }}</label>
                         </div>
                     </div>
-
                     <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                         <button type="submit" class="text-white bg-primary-light hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
                             {{ __('Save') }}
