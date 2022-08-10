@@ -14,7 +14,7 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 class PatientController extends Controller
 {
     public function index(){
-        $patients = Patient::with(['chronic_diseases','hospital'])->paginate('15');
+        $patients = Patient::with(['chronic_diseases','hospital'])->paginate(15);
         return view('patients.view',compact('patients'));
     }
     public function view_single($id){
@@ -139,7 +139,7 @@ class PatientController extends Controller
 
     public function search(Request $request){
         $keyword = $request->q;
-        $patients = Patient::with(['chronic_diseases','hospital'])->where('name', 'like', '%' . $keyword . '%')->orWhere('phone', 'like', '%' . $keyword . '%')->orWhere('national_id', 'like', '%' . $keyword . '%')->get();
+        $patients = Patient::with(['chronic_diseases','hospital'])->where('name', 'like', '%' . $keyword . '%')->orWhere('phone', 'like', '%' . $keyword . '%')->orWhere('national_id', 'like', '%' . $keyword . '%')->paginate(15);
         return view('patients.view', compact('patients'));
     }
 
@@ -327,7 +327,7 @@ class PatientController extends Controller
 
     public function download_patient_data_t($id)
     {
-        $patient =  Patient::with(['field_research','chronic_diseases','hospital','records.user'])->find($id);
+        $patient =  Patient::with(['field_research.governorate', 'field_research.marital_status', 'field_research.educational_level','chronic_diseases','hospital','records.user'])->find($id);
         return view('pdf.patient-report', compact('patient'));
     }
 }

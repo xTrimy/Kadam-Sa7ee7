@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-white leading-tight">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
@@ -107,6 +107,11 @@
     </div>
 
     </table>
+    <div class="py-4 px-8">
+    @if(method_exists($patients, 'links'))
+        {{ $patients->appends(Request::except(['page','_token']))->links() }}
+    @endif
+    </div>
 </div>
 
             </div>

@@ -5,6 +5,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientFieldResearchController;
 use App\Http\Controllers\PatientRecordController;
+use App\Http\Controllers\SuppliesController;
+use App\Http\Controllers\SupplyCategoriesController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,4 +59,32 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::put('/{id}/update', [HospitalController::class, 'update'])->name('.update');
         Route::delete('/{id}/delete', [HospitalController::class, 'delete'])->name('.delete');
     });
+
+    Route::prefix('/supplies')->as('.supplies')->group(function () {
+        Route::prefix('/categories')->as('.categories')->group(function () {
+            Route::get('/create', [SupplyCategoriesController::class, 'create'])->name('.create');
+            Route::post('/create', [SupplyCategoriesController::class, 'store'])->name('.store');
+            Route::delete('/{id}/delete', [SupplyCategoriesController::class, 'delete'])->name('.delete');
+        });
+        Route::get('/', [SuppliesController::class, 'index']);
+        Route::post('/', [SuppliesController::class, 'edit_quantity']);
+        Route::get('/create', [SuppliesController::class, 'create'])->name('.create');
+        Route::post('/create', [SuppliesController::class, 'store'])->name('.store');
+        Route::get('/{id}/edit', [SuppliesController::class, 'edit'])->name('.edit');
+        Route::put('/{id}/update', [SuppliesController::class, 'update'])->name('.update');
+        Route::delete('/{id}/delete', [SuppliesController::class, 'delete'])->name('.delete');
+        Route::get('/transfer/{type}/{id?}', [SuppliesController::class, 'transfer'])->name('.transfer');
+        Route::post('/transfer/{type?}/{id?}', [SuppliesController::class, 'transfer_store'])->name('.transfer');
+    });
+
+    Route::prefix('/users')->as('.users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::get('/create', [UserController::class, 'create'])->name('.create');
+        Route::post('/create', [UserController::class, 'store'])->name('.store');
+        Route::get('/{id}/edit', [UserController::class, 'edit'])->name('.edit');
+        Route::put('/{id}/update', [UserController::class, 'update'])->name('.update');
+        Route::delete('/{id}/delete', [UserController::class, 'delete'])->name('.delete');
+    });
+
+    
 });
