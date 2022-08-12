@@ -23,4 +23,13 @@ class PatientRecord extends Model
     public function user(){
         return $this->belongsTo(User::class, 'checked_by');
     }
+
+    public function patient(){
+        return $this->belongsTo(Patient::class);
+    }
+
+    public function supply_transactions(){
+        return $this->hasMany(SupplyTransaction::class);
+    }
+    
 }

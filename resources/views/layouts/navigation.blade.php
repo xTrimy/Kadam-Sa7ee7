@@ -24,6 +24,9 @@
                     <x-nav-link :href="route('dashboard.supplies')" :active="request()->routeIs('dashboard.supplies')">
                         {{ __('Supplies') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('dashboard.users')" :active="request()->routeIs('dashboard.users')">
+                        {{ __('Users') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -86,6 +89,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('dashboard.supplies')" :active="request()->routeIs('dashboard.supplies')">
                 {{ __('Supplies') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dashboard.users')" :active="request()->routeIs('dashboard.users')">
+                {{ __('Users') }}
             </x-responsive-nav-link>
         </div>
 

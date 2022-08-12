@@ -320,7 +320,15 @@ class PatientController extends Controller
 
 
     public function download_patient_data($id){
-        $patient =  Patient::with(['field_research','chronic_diseases','hospital','records.user'])->find($id);
+        $patient =  Patient::with([
+            'field_research.governorate',
+            'field_research.marital_status',
+            'field_research.educational_level',
+            'chronic_diseases',
+            'hospital',
+            'records.user',
+            'patient_records.supply_transactions.supply'
+           ])->find($id);
         $pdf = \PDF::loadView('pdf.patient-report', ['patient' => $patient]);
         return $pdf->download("patient-report-$id.pdf");
     }

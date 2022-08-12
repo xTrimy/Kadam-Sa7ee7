@@ -40,6 +40,27 @@
         <img class="w-48" src="{{ public_path().'/storage/'.$patient->national_id_photo_back }}" alt="">
     </div>
     <p>تاريخ تسجيل المريض: {{ $patient->created_at->format('d/m/Y') }}</p>
+    <div class="page-break"></div>
+        <div>
+            <div style="float: left; text-align:left; width: 25%;">مؤسسة صناع الخير</div>
+            <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
+        </div>
+        <h1 class="text-center text-3xl mt-8 mb-8">المستلزمات المستخدمة من قبل المريض</h1>
+        <ol>
+        @forelse ($patient->supplies as $supply)
+            <li class="list-decimal">
+                <p class=" mt-2"><b>{{ __("Supply Name") }}</b> : {{ $supply->supply->name }} 
+                    |
+                <span>
+                <b>{{ __("Quantity") }}</b> : {{ $supply->quantity }}
+                </span></p>
+            </li>
+        @empty
+        <li>
+            <p class=" mt-2 text-2xl">{{ __("The patient hasn't used any supplies yet.") }}</p>
+        </li>
+        @endforelse
+        </ol>
      @if($patient->records->first())
         <div class="page-break"></div>
         <div>
@@ -75,6 +96,21 @@
                 
                     
             @endforeach
+            @if(count($record->supply_transactions) > 0)
+            <p class="mt-4 text-xl"><b >المستلزمات المستخدمة:</b></p>
+            <ol>
+            @foreach ($record->supply_transactions as $transaction)
+            <li class="list-decimal">
+                <p class=" mt-2"><b>{{ __("Supply Name") }}</b> : {{ $transaction->supply->name }} 
+                    |
+                <span>
+                <b>{{ __("Quantity") }}</b> : {{ $transaction->quantity }}
+                </span></p>
+                
+            </li>
+            @endforeach
+            </ol>
+            @endif
             <hr class="my-8">
         @endforeach
     @endif

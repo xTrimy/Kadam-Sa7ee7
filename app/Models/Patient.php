@@ -37,6 +37,10 @@ class Patient extends Model
         return $this->hasMany(PatientSupply::class);
     }
 
+    public function patient_records(){
+        return $this->hasMany(PatientRecord::class);
+    }
+
     public function getAge(){
         $diff = abs(strtotime(date('Y-m-d')) - strtotime($this->birth_date));
         $age = floor($diff / (365 * 60 * 60 * 24));

@@ -177,6 +177,8 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
 
+        Spatie\Permission\PermissionServiceProvider::class,
+
 
 
     ],
