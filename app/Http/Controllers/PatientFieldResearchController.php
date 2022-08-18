@@ -74,7 +74,7 @@ class PatientFieldResearchController extends Controller
             'heared_about_organization',
         ];
         foreach ($arrays as $array) {
-         
+
             if (isset($request[$array])) {
                 $arrays[$array] = implode(',', $request[$array]);
             }
