@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\NurseController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientFieldResearchController;
 use App\Http\Controllers\PatientRecordController;
@@ -36,11 +38,13 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::middleware('permission:View patient')->get('/view/{id}', [PatientController::class, 'view_single'])->name('view_single');
         Route::middleware('permission:View patient')->get('/download/{id}', [PatientController::class, 'download_patient_data'])->name('download_data_pdf');
         Route::middleware('permission:View patient')->get('/download_t/{id}', [PatientController::class, 'download_patient_data_t'])->name('download_data_pdf_t');
-        Route::middleware('permission:View patient')->get('/create', [PatientController::class, 'create'])->name('.create');
         Route::get('/search', [PatientController::class, 'search'])->name('.search');
+        Route::middleware('permission:Add patient')->get('/add', [PatientController::class, 'add_national_id'])->name('.create');
+        Route::middleware('permission:Add patient')->post('/add', [PatientController::class, 'check_national_id'])->name('.search_id');
+        Route::middleware('permission:Add patient')->get('/create', [PatientController::class, 'create'])->name('.create_new');
         Route::middleware('permission:Add patient')->post('/create', [PatientController::class, 'store'])->name('.store');
         Route::middleware('permission:Edit patient')->get('/{id}/edit', [PatientController::class, 'edit'])->name('.edit');
-        Route::middleware('permission:Edit patient')->put('/{id}/update', [PatientController::class, 'update'])->name('.update');
+        Route::middleware('permission:Edit patient')->put('/{id}/edit', [PatientController::class, 'update'])->name('.update');
         Route::middleware('permission:Delete patient')->delete('/{id}/delete', [PatientController::class, 'delete'])->name('.delete');
         Route::middleware('permission:Add field research')->prefix('/{id}/field_research')->as('.field_research')->group(function(){
             Route::get('/', [PatientFieldResearchController::class, 'create'])->name('.create');
@@ -49,6 +53,8 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::prefix('/{id}/record')->as('.record')->group(function () {
             Route::middleware('permission:Add patient report')->get('/', [PatientRecordController::class, 'create'])->name('.create');
             Route::middleware('permission:Add patient report')->post('/', [PatientRecordController::class, 'store'])->name('.create');
+            Route::middleware('permission:Edit patient report')->get('/{record_id}/edit', [PatientRecordController::class, 'edit'])->name('.edit');
+            Route::middleware('permission:Edit patient report')->put('/{record_id}/edit', [PatientRecordController::class, 'update']);
         });
     });
     Route::prefix('/hospitals')->as('.hospitals')->group(function(){
@@ -56,7 +62,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::middleware('permission:Add hospital')->get('/create', [HospitalController::class, 'create'])->name('.create');
         Route::middleware('permission:Add hospital')->post('/create', [HospitalController::class, 'store'])->name('.store');
         Route::middleware('permission:Edit hospital')->get('/{id}/edit', [HospitalController::class, 'edit'])->name('.edit');
-        Route::middleware('permission:Edit hospital')->put('/{id}/update', [HospitalController::class, 'update'])->name('.update');
+        Route::middleware('permission:Edit hospital')->put('/{id}/edit', [HospitalController::class, 'update'])->name('.update');
         Route::middleware('permission:Delete hospital')->delete('/{id}/delete', [HospitalController::class, 'delete'])->name('.delete');
     });
 
@@ -82,8 +88,26 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::middleware('permission:Add user')->get('/create', [UserController::class, 'create'])->name('.create');
         Route::middleware('permission:Add user')->post('/create', [UserController::class, 'store'])->name('.store');
         Route::middleware('permission:Add user')->get('/{id}/edit', [UserController::class, 'edit'])->name('.edit');
-        Route::middleware('permission:Add user')->put('/{id}/update', [UserController::class, 'update'])->name('.update');
+        Route::middleware('permission:Add user')->put('/{id}/edit', [UserController::class, 'update'])->name('.edit');
         Route::middleware('permission:Delete users')->delete('/{id}/delete', [UserController::class, 'delete'])->name('.delete');
+    });
+
+    Route::prefix('/doctors')->as('.doctors')->group(function(){
+        Route::get('/', [DoctorController::class, 'index']);
+        Route::middleware('permission:Add doctor')->get('/create', [DoctorController::class, 'create'])->name('.create');
+        Route::middleware('permission:Add doctor')->post('/create', [DoctorController::class, 'store'])->name('.store');
+        Route::middleware('permission:Edit doctor')->get('/{id}/edit', [DoctorController::class, 'edit'])->name('.edit');
+        Route::middleware('permission:Edit doctor')->put('/{id}/edit', [DoctorController::class, 'update'])->name('.update');
+        Route::middleware('permission:Delete doctor')->delete('/{id}/delete', [DoctorController::class, 'delete'])->name('.delete');
+    });
+
+    Route::prefix('/nurses')->as('.nurses')->group(function () {
+        Route::get('/', [NurseController::class, 'index']);
+        Route::middleware('permission:Add nurse')->get('/create', [NurseController::class, 'create'])->name('.create');
+        Route::middleware('permission:Add nurse')->post('/create', [NurseController::class, 'store'])->name('.store');
+        Route::middleware('permission:Edit nurse')->get('/{id}/edit', [NurseController::class, 'edit'])->name('.edit');
+        Route::middleware('permission:Edit nurse')->put('/{id}/edit', [NurseController::class, 'update'])->name('.update');
+        Route::middleware('permission:Delete nurse')->delete('/{id}/delete', [NurseController::class, 'delete'])->name('.delete');
     });
 
     

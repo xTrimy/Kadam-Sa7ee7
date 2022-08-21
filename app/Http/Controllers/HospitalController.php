@@ -64,9 +64,10 @@ class HospitalController extends Controller
      * @param  \App\Models\Hospital  $hospital
      * @return \Illuminate\Http\Response
      */
-    public function edit(Hospital $hospital)
+    public function edit($id)
     {
-        //
+        $hospital = Hospital::find($id);
+        return view('hospitals.add', compact('hospital'));
     }
 
     /**
@@ -76,9 +77,15 @@ class HospitalController extends Controller
      * @param  \App\Models\Hospital  $hospital
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Hospital $hospital)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name'=>"required|string",
+            "address"=>"required|string"
+        ]);
+        $hospital = Hospital::find($id);
+        $hospital->update($request->only(['name', 'address']));
+        return redirect()->back()->with('success', __('Hospital updated successfully'));
     }
 
     /**

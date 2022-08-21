@@ -34,6 +34,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'Add field research',
             'View field research',
             'Add patient report',
+            'Edit patient report',
             'View patient report',
             'Delete patient report',
             'Add supplies',
@@ -47,7 +48,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'Add user',
             'Assign users to hospitals',
             'Delete users',
-            'Delete admin users'
+            'Delete admin users',
+            'Add doctor',
+            'View doctor',
+            'Edit doctor',
+            'Delete doctor',
+            'Add nurse',
+            'View nurse',
+            'Edit nurse',
+            'Delete nurse',
+
         ];
         $add_patient = Permission::create(['name' => 'Add patient']);
         $view_patient = Permission::create(['name' => 'View patient']);
@@ -68,6 +78,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $add_field_research = Permission::create(['name' => 'Add field research']);
         $view_field_research = Permission::create(['name' => 'View field research']);
         $add_patient_report = Permission::create(['name' => 'Add patient report']);
+        $edit_patient_report = Permission::create(['name' => 'Edit patient report']);
         $view_patient_report = Permission::create(['name' => 'View patient report']);
         $delete_patient_report = Permission::create(['name' => 'Delete patient report']);
         $add_supplies = Permission::create(['name' => 'Add supplies']);
@@ -82,6 +93,15 @@ class RolesAndPermissionsSeeder extends Seeder
         $assign_users_to_hospitals = Permission::create(['name' => 'Assign users to hospitals']);
         $delete_users = Permission::create(['name' => 'Delete users']);
         $delete_admin_users = Permission::create(['name' => 'Delete admin users']);
+        $add_doctor = Permission::create(['name' => 'Add doctor']);
+        $view_doctor = Permission::create(['name' => 'View doctor']);
+        $edit_doctor = Permission::create(['name' => 'Edit doctor']);
+        $delete_doctor = Permission::create(['name' => 'Delete doctor']);
+        $add_nurse = Permission::create(['name' => 'Add nurse']);
+        $view_nurse = Permission::create(['name' => 'View nurse']);
+        $edit_nurse = Permission::create(['name' => 'Edit nurse']);
+        $delete_nurse = Permission::create(['name' => 'Delete nurse']);
+
 
         $admin_role = Role::create(['name' => 'admin']);
         $admin_role->givePermissionTo($permissions);
@@ -89,7 +109,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $coordinator_role->givePermissionTo($add_patient);
         $coordinator_role->givePermissionTo($view_hospital_patients);
         $coordinator_role->givePermissionTo($view_patient);
-        $coordinator_role->givePermissionTo($edit_patient);
+        // $coordinator_role->givePermissionTo($edit_patient);
         $coordinator_role->givePermissionTo($add_field_research);
         $coordinator_role->givePermissionTo($view_field_research);
         $coordinator_role->givePermissionTo($add_patient_report);
@@ -99,12 +119,13 @@ class RolesAndPermissionsSeeder extends Seeder
         $coordinator_role->givePermissionTo($view_hospital);
         $coordinator_role->givePermissionTo($view_contact_forms);
         $coordinator_role->givePermissionTo($view_activity_logs);
-        $manager_role = Role::create(['name' => 'manager']);
+        $coordinator_role->givePermissionTo($add_doctor);
+        $coordinator_role->givePermissionTo($view_doctor);
+        $coordinator_role->givePermissionTo($add_nurse);
+        $coordinator_role->givePermissionTo($view_nurse);
 
+        $manager_role = Role::create(['name' => 'manager']);
         $manager_role->givePermissionTo($permissions);
         $manager_role->revokePermissionTo($delete_admin_users);
-
-
-
     }
 }

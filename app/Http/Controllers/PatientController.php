@@ -6,6 +6,7 @@ use App\Models\ChronicDisease;
 use App\Models\Hospital;
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Spatie\ImageOptimizer\OptimizerChainFactory;
@@ -14,17 +15,53 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 class PatientController extends Controller
 {
     public function index(){
-        $patients = Patient::with(['chronic_diseases','hospital'])->paginate(15);
-        return view('patients.view',compact('patients'));
+        $count = Patient::count();
+
+        if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')){
+            $patients = Patient::with(['chronic_diseases', 'hospital'])->paginate(15);
+            return view('patients.view', compact('patients', 'count'));
+
+        }else{
+            $hospital = auth()->user()->hospitals()->first();
+            $patients = $hospital->patients()->paginate(15);
+            return view('patients.view', compact('patients', 'count', 'hospital'));
+        }
     }
     public function view_single($id){
         $patient = Patient::with(['chronic_diseases','hospital','user'])->findOrFail($id);
         return view('patients.single',compact('patient'));
     }
+    public function add_national_id(){
+        return view('patients.add_ID_number');
+    }
+
+    // check_national_id to check if national id exists in the database
+    // if exists redirect to view_single page with patient's data
+    // if not exists redirect to create new patient page
+    public function check_national_id(Request $request){
+        $patient = Patient::where('national_id', $request->national_id)->first();
+        if($patient){
+            Session::flash('error', __('Patient already exists'));
+            return redirect()->route('dashboard.patientsview_single', $patient->id);
+        }else{
+            Session::flash('national_id', $request->national_id);
+            $national_data = extract_data_from_national_id($request->national_id);
+            if($national_data){
+                Session::flash('national_data', $national_data);
+            }else{
+                return redirect()->back()->with('error', __('Invalid national id'));
+            }
+            return redirect()->route('dashboard.patients.create_new');
+        }
+    }
 
     public function create()
     {
-        $hospitals = Hospital::all();
+        if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')){
+            $hospitals = Hospital::all();
+        }else{
+            $hospitals = auth()->user()->hospitals()->get();
+        }
         $chronic_diseases = ChronicDisease::all();
         return view('patients.add', compact('hospitals', 'chronic_diseases'));
     }
@@ -40,7 +77,7 @@ class PatientController extends Controller
             'name' => 'required|string',
             'phone' => 'required|string|unique:patients',
             'address' => 'required|string',
-            'national_id' => 'required|string',
+            'national_id' => 'required|string|unique:patients,national_id',
             'birth_date' => 'required|date',
             'national_id_photo_face' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'national_id_photo_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -60,7 +97,9 @@ class PatientController extends Controller
         $patient->national_id_photo_back = $request->national_id_photo_back ?? null;
         $patient->created_by = $request->user()->id;
         $patient->hospital_id = $request->hospital_id;
-
+        if(!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('manager')){
+            $patient->hospital_id = auth()->user()->hospitals()->first()->id;
+        }
         //national_id_photo_face
         if ($request->hasFile('national_id_photo_face')) {
             $file = $request->file('national_id_photo_face');
@@ -137,10 +176,119 @@ class PatientController extends Controller
         return redirect()->route('dashboard.patients')->with('success', __('Patient added successfully'));
     }
 
+    public function edit($id)
+    {
+        $hospitals = Hospital::all();
+        $chronic_diseases = ChronicDisease::all();
+        $patient = Patient::with(['chronic_diseases','hospital'])->find($id);
+        return view('patients.add', compact('patient', 'hospitals', 'chronic_diseases'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $rules = [
+            'name' => 'required|string',
+            'phone' => 'required|string|unique:patients,phone,' . $id,
+            'address' => 'required|string',
+            'national_id' => 'required|string|unique:patients,national_id,' . $id,
+            'birth_date' => 'required|date',
+            'national_id_photo_face' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'national_id_photo_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'hospital_id' => 'required|integer|exists:hospitals,id',
+            'chronic_disease' => 'nullable|array',
+        ];
+        $request->validate($rules);
+        $patient = Patient::find($id);
+        $patient->name = $request->name;
+        $patient->phone = $request->phone;
+        $patient->address = $request->address;
+        $patient->national_id = $request->national_id;
+        $patient->birth_date = date('Y-m-d', strtotime($request->birth_date));
+        $patient->national_id_photo_face = $request->national_id_photo_face ?? null;
+        $patient->national_id_photo_back = $request->national_id_photo_back ?? null;
+        $patient->hospital_id = $request->hospital_id;
+        $patient->save();
+        //national_id_photo_face
+        if ($request->hasFile('national_id_photo_face')) {
+            $file = $request->file('national_id_photo_face');
+            $name = time() . '_' . $file->getClientOriginalName();
+            //move to storage/
+            Storage::disk('public')->put($name, file_get_contents($file));
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizerChain->optimize(storage_path('app/public/') . $name);
+            //if image is larger than 500×500, resize it to 500×500 andkeep the aspect ratio
+            $image = imagecreatefromjpeg(storage_path('app/public/') . $name);
+            $width = imagesx($image);
+            $height = imagesy($image);
+            if ($width > 500 || $height > 500) {
+                $new_width = 500;
+                $new_height = 500;
+                //keep aspect ratio
+                if ($width > $height) {
+                    $new_height = $height * ($new_width / $width);
+                } else {
+                    $new_width = $width * ($new_height / $height);
+                }
+                $new_image = imagecreatetruecolor($new_width, $new_height);
+                imagecopyresampled($new_image, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                imagejpeg($new_image, storage_path('app/public/') . $name);
+            }
+            $patient->national_id_photo_face = $name;
+        }
+        //national_id_photo_back
+        if ($request->hasFile('national_id_photo_back')) {
+            $file = $request->file('national_id_photo_back');
+            $name = time() . '_' . $file->getClientOriginalName();
+            //move to storage/
+            Storage::disk('public')->put($name, file_get_contents($file));
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizerChain->optimize(storage_path('app/public/') . $name);
+            //if image is larger than 500×500, resize it to 500×500 andkeep the aspect ratio
+            $image = imagecreatefromjpeg(storage_path('app/public/') . $name);
+            $width = imagesx($image);
+            $height = imagesy($image);
+            if ($width > 500 || $height > 500) {
+                $new_width = 500;
+                $new_height = 500;
+                //keep aspect ratio
+                if ($width > $height) {
+                    $new_height = $height * ($new_width / $width);
+                } else {
+                    $new_width = $width * ($new_height / $height);
+                }
+                $new_image = imagecreatetruecolor($new_width, $new_height);
+                imagecopyresampled($new_image, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                imagejpeg($new_image, storage_path('app/public/') . $name);
+            }
+            $patient->national_id_photo_back = $name;
+        }
+        $patient->save();
+        $chronic_diseases = $request->chronic_disease ?? [];
+        $patient->chronic_diseases()->detach();
+        foreach ($chronic_diseases  as $disease) {
+            if($disease == null) continue;
+            $chronic_disease = \App\Models\ChronicDisease::where('name', $disease)->first();
+            if (!$chronic_disease) {
+                $chronic_disease = new \App\Models\ChronicDisease();
+                $chronic_disease->name = $disease;
+                $chronic_disease->created_by = $request->user()->id;
+                $chronic_disease->save();
+            }
+            $patient->chronic_diseases()->attach($chronic_disease->id);
+        }
+        return redirect()->route('dashboard.patients')->with('success', __('Patient updated successfully'));
+    }
+
     public function search(Request $request){
+        
         $keyword = $request->q;
-        $patients = Patient::with(['chronic_diseases','hospital'])->where('name', 'like', '%' . $keyword . '%')->orWhere('phone', 'like', '%' . $keyword . '%')->orWhere('national_id', 'like', '%' . $keyword . '%')->paginate(15);
-        return view('patients.view', compact('patients'));
+        if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')){
+            $patients = Patient::with(['chronic_diseases', 'hospital'])->where('name', 'like', '%' . $keyword . '%')->orWhere('phone', 'like', '%' . $keyword . '%')->orWhere('national_id', 'like', '%' . $keyword . '%')->paginate(15);
+        }else{
+            $patients = Patient::with(['chronic_diseases', 'hospital'])->where('name', 'like', '%' . $keyword . '%')->orWhere('phone', 'like', '%' . $keyword . '%')->orWhere('national_id', 'like', '%' . $keyword . '%')->where('hospital_id', auth()->user()->hospitals()->first()->id)->paginate(15);
+        }
+        $count = $patients->count();
+        return view('patients.view', compact('patients','count','keyword'));
     }
 
     public function add_api(Request $request){
@@ -318,7 +466,6 @@ class PatientController extends Controller
         return $records;
     }
 
-
     public function download_patient_data($id){
         $patient =  Patient::with([
             'field_research.governorate',
@@ -329,6 +476,11 @@ class PatientController extends Controller
             'records.user',
             'patient_records.supply_transactions.supply'
            ])->find($id);
+        if(!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('manager')){
+            if($patient->hospital_id != auth()->user()->hospitals()->first()->id){
+                return redirect()->back()->with('error', __('You are not authorized to download this patient data'));
+            }
+        }
         $pdf = \PDF::loadView('pdf.patient-report', ['patient' => $patient]);
         return $pdf->download("patient-report-$id.pdf");
     }

@@ -21,4 +21,12 @@ class Hospital extends Model
         return $this->hasMany(HospitalSupply::class);
     }
 
+    public function doctors(){
+        return $this->hasMany(Doctor::class);
+    }
+    
+    public function nurses(){
+        return $this->hasMany(Nurse::class);
+    }
+
 }

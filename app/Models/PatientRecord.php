@@ -31,5 +31,13 @@ class PatientRecord extends Model
     public function supply_transactions(){
         return $this->hasMany(SupplyTransaction::class);
     }
+
+    public function doctor(){
+        return $this->belongsTo(Doctor::class);
+    }
+
+    public function nurse(){
+        return $this->belongsTo(Nurse::class);
+    }
     
 }

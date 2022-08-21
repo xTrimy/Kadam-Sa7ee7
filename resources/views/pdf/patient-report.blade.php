@@ -78,6 +78,9 @@
                     "وصف التقرير" => $record->record_description,
                     "الملاحظات" => $record->record_notes,
                     "المرفقات" => $record->record_photo,
+                    "صورة الجرح" => $record->wound_image,
+                    "الطبيب" => $record->doctor?$record->doctor->name:null,
+                    "الممرضة" => $record->nurse?$record->nurse->name:null,
                     "تاريخ العملية المحدد" => $record->operation_date?date('d/m/Y',strtotime($record->operation_date)):null,
                     "هل أستلم المريض المستلزمات الطبية؟" => $record->supplied?"نعم":"لا",
                     "هل تم فحص المريض؟" => $record->is_checked?"نعم":"لا",
@@ -92,7 +95,14 @@
                         continue;
                     }
                 @endphp
-                <p class=" mt-2"><b>{{ $key }}</b> : {{ $value }}</p>
+                @if($key == "المرفقات" || $key == "صورة الجرح")
+                    <div id="images">
+                        <p class="font-bold mt-2">{{ __($key) }}</p>
+                        <img class="w-1/2" src="{{ public_path('uploads/patient_records/').$value }}" alt="">
+                    </div>
+                @else
+                    <p class=" mt-2"><b>{{ $key }}</b> : {{ $value }}</p>
+                @endif
                 
                     
             @endforeach
@@ -122,13 +132,12 @@
             <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
         </div>
         <h1 class="text-center text-3xl mt-8 mb-8">البحث الميداني</h1>
-    @endif
 
     @php
         $field_research = $patient->field_research->last();
         $data = 
         [
-            'governorate'=>App::isLocale('en')? $field_research->governorate->name:$field_research->governorate->ar_name,
+            'governorate'=>App::isLocale('en')?($field_research->governorate? $field_research->governorate->name:$field_research->governorate->ar_name):"",
             'gender'=>$field_research->gender == 0 ? 'ذكر' : 'أنثى',
             'center'=>$field_research->center,
             'village'=>$field_research->village,
@@ -240,6 +249,7 @@
         @endif
                     
     @endforeach
+    @endif
 
     
 </body>
