@@ -9,6 +9,10 @@ class PatientFieldResearch extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'meta' => 'array'
+    ];
+
     public function governorate(){
         return $this->belongsTo(Governorate::class);
     }

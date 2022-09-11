@@ -14,6 +14,9 @@
 
     {{-- Line Awesome --}}
     <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    
+    {{-- Font Awesome --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />        <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.10.5/viewer.min.js" integrity="sha512-i5q29evO2Z4FHGCO+d5VLrwgre/l+vaud5qsVqQbPXvHmD9obORDrPIGFpP2+ep+HY+z41kAmVFRHqQAjSROmA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     {{-- Lordicon --}}
     <script src="https://cdn.lordicon.com/xdjxvujz.js"></script>
@@ -39,47 +42,33 @@
         <section data-splide='{"type":"loop"}' class="splide w-full h-full" role="group" aria-label="Splide Basic HTML Example">
             <div class="splide__track h-full">
                     <ul class="splide__list text-center h-full">
-                        <li class="splide__slide py-80 relative">
-                            <img class="w-full h-full absolute top-0 object-cover object-center" src="{{ asset('images/62062_2.jpeg') }}" alt="">
+                        @foreach ($slider_images as $slider_image)
+                            <li class="splide__slide py-80 relative">
+                            <img class="w-full h-full absolute top-0 object-cover object-center" src="{{ asset('uploads/slider_images/'.$slider_image->image) }}" alt="">
                             <div class="splide__text transition-all duration-700  opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
                             rounded-lg py-4 lg:py-16 px-8 lg:px-4 xl:px-32 bg-black font-bold text-white text-xl md:text-2xl lg:text-5xl"
                             style="--tw-bg-opacity:0.4">
-                        تجربة تجربة</div>
+                                {{ $slider_image->title }}
+                                <div class="text-sm lg:text-base mt-4">
+                                    {{ $slider_image->description }}
+                                </div>
+                            </div>
                         </li>
-                        <li class="splide__slide py-80 relative">
-                            <img class="w-full h-full absolute top-0 object-cover object-center" src="{{ asset('images/10893_1.jpeg') }}" alt="">
-                            <div class="splide__text transition-all duration-700  opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                            rounded-lg py-4 lg:py-16 px-8 lg:px-4 xl:px-32 bg-black font-bold text-white text-xl md:text-2xl lg:text-5xl"
-                            style="--tw-bg-opacity:0.4">
-                        تجربة تجربة</div>
-                        </li>
-                        <li class="splide__slide py-80 relative">
-                            <img class="w-full h-full absolute top-0 object-cover object-center" src="{{ asset('images/33662_3.jpeg') }}" alt="">
-                            <div class="splide__text transition-all duration-700  opacity-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                            rounded-lg py-4 lg:py-16 px-8 lg:px-4 xl:px-32 bg-black font-bold text-white text-xl md:text-2xl lg:text-5xl"
-                            style="--tw-bg-opacity:0.4">
-                        تجربة تجربة</div>
-                        </li>
+                        @endforeach
+                        
                     </ul>
             </div>
         </section>
     </div>
     <section class="flex w-full justify-center py-4 text-primary-dark px-2  md:px-2 lg:px-4 xl:px-32 flex-wrap lg:flex-nowrap">
-        <div class="py-8 px-20 text-center w-full lg:w-auto">
-            <i class="las la-stethoscope text-7xl"></i>
-            <p class="text-5xl font-bold mt-4 number-increment">25</p>
-            <p class="text-3xl">خدمة بالمجان</p>
-        </div>
-        <div class="py-8 px-20 text-center w-full lg:w-auto">
-            <i class="las la-smile text-7xl"></i>
-            <p class="text-5xl font-bold mt-4 number-increment">2500</p>
-            <p class="text-3xl">خدمة بالمجان</p>
-        </div>
-        <div class="py-8 px-20 text-center w-full lg:w-auto">
-            <i class="las la-bullhorn text-7xl"></i>
-            <p class="text-5xl font-bold mt-4 number-increment">150</p>
-            <p class="text-3xl">حملة توعية موسعة</p>
-        </div>
+        @foreach($insights_items as $item)
+            <div class="py-8 px-20 text-center w-full lg:w-auto">
+                <i class="{{ $item->icon }} text-7xl"></i>
+                <p class="text-5xl font-bold mt-4 number-increment">{{ $item->description }}</p>
+                <p class="text-3xl">{{ $item->title }}</p>
+            </div>
+        
+        @endforeach
     </section>
     <section class="px-2 py-20  md:px-2 lg:px-4 xl:px-32 bg-cyan-50">
         <div class="flex justiy-center">

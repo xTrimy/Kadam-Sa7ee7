@@ -3,13 +3,17 @@
 use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NurseController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PatientFieldResearchController;
 use App\Http\Controllers\PatientRecordController;
 use App\Http\Controllers\SuppliesController;
 use App\Http\Controllers\SupplyCategoriesController;
+use App\Http\Controllers\TestImportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WebsiteController;
+use App\Http\Controllers\WebsiteSettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,16 +27,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('website.home');
-});
-
-
+Route::get('/', [WebsiteController::class, 'index']);
 
 require __DIR__.'/auth.php';
 
 Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function(){
+    Route::prefix('/notifications')->as('.notifications')->group(function(){
+        Route::get('/',[NotificationController::class,'index'])->name('.index');
+        Route::get('/{id}',[NotificationController::class,'redirect'])->name('.redirect');
+
+    });
     Route::get('/',  [DashboardController::class, 'index']);
+    Route::prefix('/settings')->as('.settings')->group(function () {
+        Route::prefix('/website')->as('.website')->group(function(){
+            Route::get('slider-images',[WebsiteSettingsController::class,'slider_images'])->name('.slider_images');
+            Route::post('slider-images',[WebsiteSettingsController::class,'slider_images_store'])->name('.slider_images_store');
+
+            Route::get('insights-bar',[WebsiteSettingsController::class,'insights_bar'])->name('.insights_bar');
+            Route::post('insights-bar',[WebsiteSettingsController::class,'insights_bar_store'])->name('.insights_bar_store');
+        });
+        Route::get('/field_research',[PatientFieldResearchController::class,'field_settings'])->name('.field_research');
+        Route::post('/field_research',[PatientFieldResearchController::class,'field_settings_store']);
+    });
     Route::prefix('/patients')->as('.patients')->group(function(){
         Route::middleware('permission:View patient')->get('/', [PatientController::class, 'index']);
         Route::middleware('permission:View patient')->get('/view/{id}', [PatientController::class, 'view_single'])->name('view_single');
@@ -56,6 +72,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
             Route::middleware('permission:Edit patient report')->get('/{record_id}/edit', [PatientRecordController::class, 'edit'])->name('.edit');
             Route::middleware('permission:Edit patient report')->put('/{record_id}/edit', [PatientRecordController::class, 'update']);
         });
+        Route::get('/{id}/transfer_request', [PatientController::class, 'transfer_request'])->name('.transfer_request');
     });
     Route::prefix('/hospitals')->as('.hospitals')->group(function(){
         Route::middleware('permission:View hospital')->get('/', [HospitalController::class, 'index']);
@@ -77,7 +94,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::get('/create', [SuppliesController::class, 'create'])->name('.create');
         Route::post('/create', [SuppliesController::class, 'store'])->name('.store');
         Route::get('/{id}/edit', [SuppliesController::class, 'edit'])->name('.edit');
-        Route::put('/{id}/update', [SuppliesController::class, 'update'])->name('.update');
+        Route::put('/{id}/edit', [SuppliesController::class, 'update'])->name('.update');
         Route::delete('/{id}/delete', [SuppliesController::class, 'delete'])->name('.delete');
         Route::get('/transfer/{type}/{id?}', [SuppliesController::class, 'transfer'])->name('.transfer');
         Route::post('/transfer/{type?}/{id?}', [SuppliesController::class, 'transfer_store'])->name('.transfer');
@@ -109,6 +126,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::middleware('permission:Edit nurse')->put('/{id}/edit', [NurseController::class, 'update'])->name('.update');
         Route::middleware('permission:Delete nurse')->delete('/{id}/delete', [NurseController::class, 'delete'])->name('.delete');
     });
-
-    
 });
+Route::get('/test-import', [TestImportController::class, 'import']);
+Route::post('/test-import', [TestImportController::class, 'toPdf']);
+

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EducationalLevel;
+use App\Models\FieldResearchInput;
 use App\Models\Governorate;
 use App\Models\MaritalStatus;
 use App\Models\Patient;
@@ -19,7 +20,8 @@ class PatientFieldResearchController extends Controller
         $marital_statuses = MaritalStatus::all();
         $educational_levels = EducationalLevel::all();
         $governorates = Governorate::all();
-        return view('patient_field_research.add', compact('patient', 'marital_statuses', 'educational_levels', 'governorates'));
+        $inputs = FieldResearchInput::all();
+        return view('patient_field_research.add', compact('patient', 'marital_statuses', 'educational_levels', 'governorates', 'inputs'));
     }
 
     function store(Request $request, $id)
@@ -136,7 +138,13 @@ class PatientFieldResearchController extends Controller
             $optimizerChain->optimize(storage_path('app/public/') . $name);
 
             //if image is larger than 500×500, resize it to 500×500 andkeep the aspect ratio
-            $image = imagecreatefromjpeg(storage_path('app/public/') . $name);
+            // check if image is jpg or png
+            $ext = pathinfo($name, PATHINFO_EXTENSION);
+            if($ext == "jpg" || $ext == "jpeg"){
+                $image = imagecreatefromjpeg(storage_path('app/public/') . $name);
+            }else{
+                $image = imagecreatefrompng(storage_path('app/public/') . $name);
+            }
             $width = imagesx($image);
             $height = imagesy($image);
             if ($width > 500 || $height > 500) {
@@ -155,8 +163,88 @@ class PatientFieldResearchController extends Controller
 
             $field_research->home_photo = $name;
         }
+        // meta extra inputs
+        $meta = [];
+        $inputs = FieldResearchInput::all();
+        foreach ($inputs as $input) {
+            if ($input->type == 'file') {
+                if ($request->hasFile($input->name)) {
+                    $file = $request->file($input->name);
+                    $size = $file->getSize();
+                    // max file size is 3MB
+                    if($size > 3000000){
+                        return redirect()->back()->with('error', 'حجم الملف كبير جداً');
+                    }
+                    $name = time() . '_' . $file->getClientOriginalName();
+                    //move to storage/
+                    Storage::disk('public')->put($name, file_get_contents($file));
+                    $optimizerChain = OptimizerChainFactory::create();
+                    $optimizerChain->optimize(storage_path('app/public/') . $name);
+                    // get image size 
+                    //if image is larger than 500×500, resize it to 500×500 andkeep the aspect ratio
+                    // check if image is jpg or png
+                    $ext = pathinfo($name, PATHINFO_EXTENSION);
+                    if($ext == "jpg" || $ext == "jpeg"){
+                        $image = imagecreatefromjpeg(storage_path('app/public/') . $name);
+                    }else{
+                        $image = imagecreatefrompng(storage_path('app/public/') . $name);
+                    }
+                    $width = imagesx($image);
+                    $height = imagesy($image);
+                    if ($width > 500 || $height > 500) {
+                        $new_width = 500;
+                        $new_height = 500;
+                        //keep aspect ratio
+                        if ($width > $height) {
+                            $new_height = $height * ($new_width / $width);
+                        } else {
+                            $new_width = $width * ($new_height / $height);
+                        }
+                        $new_image = imagecreatetruecolor($new_width, $new_height);
+                        imagecopyresampled($new_image, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                        imagejpeg($new_image, storage_path('app/public/') . $name);
+                    }
+
+                    $meta[$input->name] = $name;
+                }
+            } else {
+                $meta[$input->name] = $request[$input->name];
+            }
+        }
+        $field_research->meta = json_encode($meta);
         $field_research->save();
         return redirect()->back()->with('success', __('Data has been recorded successfully'));
     }
+
+    public function field_settings(){
+        $field_research_inputs = FieldResearchInput::all();
+        return view('settings.field_research.fields',compact('field_research_inputs'));
+    }
+
+    public function field_settings_store(Request $request){
+        $request->validate([
+            'name'=>'array',
+            'type'=>'array',
+            'options'=>'array',
+            'required'=>'array',
+        ]);
+        foreach($request->name as $key => $name){
+            if($request->id[$key] == null){
+                $field_research_input = new FieldResearchInput();
+            }else{
+                $field_research_input = FieldResearchInput::find($request->id[$key]);
+            }
+            if($name == null){
+                $field_research_input->delete();
+                continue;
+            }
+            $field_research_input->name = $name;
+            $field_research_input->type = $request->type[$key];
+            $field_research_input->options = $request->options[$key];
+            $field_research_input->save();
+        }
+        return redirect()->back()->with('success', __('Data has been recorded successfully'));
+    }
+    
 
 }

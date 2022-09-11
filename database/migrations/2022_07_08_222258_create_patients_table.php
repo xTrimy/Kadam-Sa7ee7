@@ -18,7 +18,7 @@ class CreatePatientsTable extends Migration
             $table->string('name');
             $table->string('phone')->nullable();
             $table->string('address');
-            $table->string('national_id')->unique();
+            $table->string('national_id')->nullable()->unique();
             $table->date('birth_date');
             $table->string('national_id_photo_face')->nullable();
             $table->string('national_id_photo_back')->nullable();

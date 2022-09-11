@@ -648,6 +648,61 @@
                                 <label for="evaluation_comment" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform  bg-white -translate-y-4 scale-75 top-2 z-10 origin-[0] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Notes') }}</label>
                             </div>
                     </div>
+                    @php
+                        $meta = json_decode($field_research->meta??null);
+                    @endphp
+                    @foreach ($inputs as $input)
+                        <div class="flex flex-wrap md:flex-nowrap">
+                            <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                                @php
+                                    $type = $input->type;
+                                    
+                                @endphp
+                                @if ($type == 'text' || $type == 'number' || $type == 'date' || $type == 'email' || $type == 'password' || $type == 'tel' || $type == 'url' || $type == 'time' || $type == 'color' || $type == 'file' || $type == 'search' || $type == 'range' || $type == 'month' || $type == 'week' || $type == 'datetime-local' ) 
+                                    <input type="{{ $type }}" value="{{ $meta->{$input->name}??null }}"  id="input-{{ $input->id }}" name="{{ $input->name }}" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                                    <label for="input-{{ $input->id }}" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform  bg-white -translate-y-4 scale-75 top-2 z-10 origin-[0] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ $input->name }}</label>
+                                @elseif($type == 'textarea')
+                                    <textarea id="input-{{ $input->id }}" name="{{ $input->name }}" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " >{{ $meta->{$input->name}??null }}</textarea>
+                                    <label for="input-{{ $input->id }}" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform  bg-white -translate-y-4 scale-75 top-2 z-10 origin-[0] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ $input->name }}</label>
+                                @elseif($type == 'select')
+                                    <select id="input-{{ $input->id }}" name="{{ $input->name }}" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " >
+                                        @foreach (explode(',',str_replace('،',',',$input->options)) as $option)
+                                            <option {{ $meta->{$input->name}??null == $option?"selected":"" }} value="{{ $option }}">{{ $option }}</option>
+                                        @endforeach
+                                    </select>
+                                    <label for="input-{{ $input->id }}" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform  bg-white -translate-y-4 scale-75 top-2 z-10 origin-[0] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ $input->name }}</label>
+                                @elseif($type == 'radio')
+                                    <p class="mt-4">
+                                        {{ $input->name }}
+                                    </p>
+                                    <div class="flex flex-wrap">
+                                        @foreach (explode(',',str_replace('،',',',$input->options)) as $option)
+                                            <div class="flex items-center">
+                                                <input type="radio"
+                                                {{ $meta->{$input->name}??null == $option?"checked":"" }}
+                                                id="{{ $input->name }}_{{ $option }}" name="{{ $input->name }}" value="{{ $option }}" class="peer h-4 w-4 border-gray-300 rounded" />
+                                                <label for="{{ $input->name }}_{{ $option }}" class="ml-2 block text-sm text-gray-900 dark:text-white">{{ $option }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @elseif($type == 'checkbox')
+                                    <p class="mt-4">
+                                        {{ $input->name }}
+                                    </p>
+                                    <div class="flex flex-wrap">
+                                        @foreach (explode(',',str_replace('،',',',$input->options)) as $option)
+                                            <div class="flex items-center">
+                                                <input type="checkbox"
+                                                {{ $meta->{$input->name}??null == $option?"checked":"" }}
+                                                 id="{{ $input->name }}_{{ $option }}" name="{{ $input->name }}[]" value="{{ $option }}" class="peer h-4 w-4 border-gray-300 rounded" />
+                                                <label for="{{ $input->name }}_{{ $option }}" class="ml-2 block text-sm text-gray-900 dark:text-white">{{ $option }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                     <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                         <button type="submit" class="text-white bg-primary-light hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
                             {{ __('Save') }}

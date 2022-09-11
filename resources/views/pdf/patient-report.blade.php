@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -12,16 +13,27 @@
         .pagenum:before {
             content: counter(page);
         }
+        @page{
+            margin-top:100px;
+            header: page-header;
+	        footer: page-footer;
+        }
     </style>
 </head>
 <body class="mx-8">
+    <htmlpageheader name="page-header">
+        <div>
+            <div style="float: left; text-align:left; width: 25%;">مؤسسة صناع الخير</div>
+            <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
+        </div>
+    </htmlpageheader>
     <div class="flex justify-between mb-8">
        تاريخ تحميل الملف: {{ date('d/m/Y') }}
     </div>
-    <div>
-        <div style="float: left; text-align:left; width: 25%;">مؤسسة صناع الخير</div>
-        <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
-    </div>
+    <p>
+        ملف المريض:
+    </p>
+    {!! str_replace('<?xml version="1.0" encoding="UTF-8"?>','',QrCode::size(100)->generate(route('dashboard.patientsview_single',$patient->id)));  !!}
     <h1 class="text-center text-3xl mt-8 mb-8">بيانات المريض</h1>
     <p>الأسم: {{ $patient->name }}</p>
     <p>العمر: {{ $patient->getAge() }}</p>
@@ -41,10 +53,7 @@
     </div>
     <p>تاريخ تسجيل المريض: {{ $patient->created_at->format('d/m/Y') }}</p>
     <div class="page-break"></div>
-        <div>
-            <div style="float: left; text-align:left; width: 25%;">مؤسسة صناع الخير</div>
-            <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
-        </div>
+        
         <h1 class="text-center text-3xl mt-8 mb-8">المستلزمات المستخدمة من قبل المريض</h1>
         <ol>
         @forelse ($patient->supplies as $supply)
@@ -61,12 +70,21 @@
         </li>
         @endforelse
         </ol>
+        @if(auth()->user()->hasPermissionTo('Access to console page'))
+            @if(!empty($patient->supplies))
+                @php
+                    // calculate the total cost of the supplies
+                    $totalCost = 0;
+                    foreach($patient->supplies as $supply){
+                        $totalCost += $supply->supply->price * $supply->quantity;
+                    }
+                @endphp
+                <h1 class="text-lg mt-4">إجمالي التكلفة : <span>{{ $totalCost }}</span></h1>
+            @endif
+        @endif
      @if($patient->records->first())
         <div class="page-break"></div>
-        <div>
-            <div style="float: left; text-align:left; width: 25%;">مؤسسة صناع الخير</div>
-            <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
-        </div>
+        
         <h1 class="text-center text-3xl mt-8 mb-8">تقارير المريض</h1>
 
         @foreach ($patient->records->reverse() as $record)
@@ -127,10 +145,7 @@
     
     @if($patient->field_research->first())
         <div class="page-break"></div>
-        <div>
-            <div style="float: left; text-align:left; width: 25%;">مؤسسة صناع الخير</div>
-            <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
-        </div>
+        
         <h1 class="text-center text-3xl mt-8 mb-8">البحث الميداني</h1>
 
     @php
@@ -248,6 +263,24 @@
         <p class=" mt-2"><b>{{ $locale[$key] }}</b> : {!! $value !!}</p>
         @endif
                     
+    @endforeach
+    @php
+        $meta = json_decode($field_research->meta);
+    @endphp
+    @foreach ($inputs as $input)
+        @php
+            $value = $meta->{$input['name']};
+        @endphp
+        @if($input->type == 'file')
+            @if($value)
+                <p class=" mt-2"><b>{{ $input->name }}</b> :</p>
+                <img class="w-full" src="{{ public_path("/storage/".$value) }}">
+            @endif
+        @else
+            @if($value)
+                <p class=" mt-2"><b>{{ $input->name }}</b> : {!! $value !!}</p>
+            @endif
+        @endif
     @endforeach
     @endif
 

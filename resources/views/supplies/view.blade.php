@@ -77,8 +77,8 @@
                 </td>
                 <td class="py-4 px-6 text-right">
                     <div class="flex items-center justify-center">
-                        <a href="#">
-                        <div href="#" class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Edit') }}</div>
+                        <a href="{{ route('dashboard.supplies.update',$supply->id) }}">
+                        <div class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Edit') }}</div>
                         </a>
                     </div>
                 </td>

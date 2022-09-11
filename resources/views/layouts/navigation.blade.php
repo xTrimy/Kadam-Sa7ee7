@@ -27,6 +27,19 @@
                     <x-nav-link :href="route('dashboard.users')" :active="request()->routeIs('dashboard.users')">
                         {{ __('Users') }}
                     </x-nav-link>
+                    @if(auth()->user()->hasPermissionTo('Access to console page'))
+                    <button class="group relative inline-flex items-center px-4 pt-1 border-b-4 border-transparent text-sm font-medium leading-5 text-gray-200 hover:text-gray-100 hover:border-white focus:outline-none focus:text-gray-300 focus:border-gray-300 transition duration-150 ease-in-out">
+                            {{ __('Settings') }} <i class="las la-caret-down mx-2"></i>
+                    <div class="hidden group-focus-within:block absolute top-full left-1/2 transform -translate-x-1/2 py-4 w-fit text-black bg-white">
+                        <a class="block px-8 py-2 whitespace-nowrap hover:bg-gray-300">
+                            {{ __('Website Settings') }}
+                        </a>
+                        <a href="{{ route('dashboard.settings.field_research') }}" class="block px-8 py-2 whitespace-nowrap hover:bg-gray-300">
+                            {{ __('Field Research Settings') }}
+                        </a>
+                    </div>
+                    </button>
+                    @endif
                 </div>
             </div>
 

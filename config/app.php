@@ -178,7 +178,7 @@ return [
         niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
 
         Spatie\Permission\PermissionServiceProvider::class,
-
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
 
     ],
@@ -236,7 +236,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        'PDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class
+        'PDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];

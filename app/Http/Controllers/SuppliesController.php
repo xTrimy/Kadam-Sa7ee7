@@ -70,9 +70,11 @@ class SuppliesController extends Controller
      * @param  \App\Models\Supply  $supply
      * @return \Illuminate\Http\Response
      */
-    public function edit(Supply $supply)
+    public function edit($id)
     {
-        //
+        $supply = Supply::find($id);
+        $categories = \App\Models\SupplyCategory::all();
+        return view('supplies.add', compact('supply', 'categories'));
     }
 
     /**
@@ -82,9 +84,22 @@ class SuppliesController extends Controller
      * @param  \App\Models\Supply  $supply
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Supply $supply)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|unique:supplies,name,' . $id,
+            'category_id' => 'required|exists:supply_categories,id',
+            'quantity' => 'required|integer',
+        ]);
+        $supply = Supply::find($id);
+        $supply->name = $request->name;
+        $supply->supply_category_id = $request->category_id;
+        $supply->quantity = $request->quantity;
+        $supply->price = $request->price;
+        $supply->created_by = auth()->user()->id;
+        $supply->save();
+
+        return redirect()->back()->with('success', __('Supply updated successfully'));
     }
 
     /**

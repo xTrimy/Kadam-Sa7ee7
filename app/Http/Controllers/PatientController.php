@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChronicDisease;
+use App\Models\FieldResearchInput;
 use App\Models\Hospital;
 use App\Models\Patient;
+use App\Models\User;
+use App\Notifications\PatientTransferRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -71,11 +75,27 @@ class PatientController extends Controller
         return $patients;
     }
 
+    public function transfer_request($id){
+        if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager')){
+            return route('dashboard.patients');
+        }
+        $patient = Patient::findOrFail($id);
+        $hospital = auth()->user()->hospitals()->first();
+        if($patient->hospital->id == $hospital->id){
+            return redirect()->back()->with('error', __('You can not transfer to the same hospital'));
+        }
+        $users = User::whereHas("roles", function ($q) {
+            $q->where("name", "manager")->orWhere("name", "admin");
+        })->get();
+        Notification::sendNow($users, new PatientTransferRequest($patient, $hospital,auth()->user()));
+        return redirect()->back()->with('success', __('Transfer request sent successfully'));
+    }
+
     public function store(Request $request)
     {
         $rules = [
             'name' => 'required|string',
-            'phone' => 'required|string|unique:patients',
+            'phone' => 'nullable|string|unique:patients',
             'address' => 'required|string',
             'national_id' => 'required|string|unique:patients,national_id',
             'birth_date' => 'required|date',
@@ -83,7 +103,7 @@ class PatientController extends Controller
             'national_id_photo_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'hospital_id' => 'required|integer|exists:hospitals,id',
             'chronic_disease' => 'nullable|array',
-            'chronic_disease.*' => 'required|string',
+            'gender' => 'required|boolean',
         ];
         $request->validate($rules);
 
@@ -91,6 +111,7 @@ class PatientController extends Controller
         $patient->name = $request->name;
         $patient->phone = $request->phone;
         $patient->address = $request->address;
+        $patient->gender = $request->gender;
         $patient->national_id = $request->national_id;
         $patient->birth_date = date('Y-m-d', strtotime($request->birth_date));
         $patient->national_id_photo_face = $request->national_id_photo_face ?? null;
@@ -188,7 +209,7 @@ class PatientController extends Controller
     {
         $rules = [
             'name' => 'required|string',
-            'phone' => 'required|string|unique:patients,phone,' . $id,
+            'phone' => 'nullable|string|unique:patients,phone,' . $id,
             'address' => 'required|string',
             'national_id' => 'required|string|unique:patients,national_id,' . $id,
             'birth_date' => 'required|date',
@@ -196,12 +217,14 @@ class PatientController extends Controller
             'national_id_photo_back' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'hospital_id' => 'required|integer|exists:hospitals,id',
             'chronic_disease' => 'nullable|array',
+            'gender' => 'required|boolean'
         ];
         $request->validate($rules);
         $patient = Patient::find($id);
         $patient->name = $request->name;
         $patient->phone = $request->phone;
         $patient->address = $request->address;
+        $patient->gender = $request->gender;
         $patient->national_id = $request->national_id;
         $patient->birth_date = date('Y-m-d', strtotime($request->birth_date));
         $patient->national_id_photo_face = $request->national_id_photo_face ?? null;
@@ -467,6 +490,7 @@ class PatientController extends Controller
     }
 
     public function download_patient_data($id){
+        ini_set('memory_limit', '-1');
         $patient =  Patient::with([
             'field_research.governorate',
             'field_research.marital_status',
@@ -481,13 +505,15 @@ class PatientController extends Controller
                 return redirect()->back()->with('error', __('You are not authorized to download this patient data'));
             }
         }
-        $pdf = \PDF::loadView('pdf.patient-report', ['patient' => $patient]);
+        $inputs = FieldResearchInput::all();
+        $pdf = \PDF::loadView('pdf.patient-report', ['patient' => $patient, 'inputs' => $inputs]);
         return $pdf->download("patient-report-$id.pdf");
     }
 
     public function download_patient_data_t($id)
     {
+        $inputs = FieldResearchInput::all();
         $patient =  Patient::with(['field_research.governorate', 'field_research.marital_status', 'field_research.educational_level','chronic_diseases','hospital','records.user'])->find($id);
-        return view('pdf.patient-report', compact('patient'));
+        return view('pdf.patient-report', compact('patient','inputs'));
     }
 }

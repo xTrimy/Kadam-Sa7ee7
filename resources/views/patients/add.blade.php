@@ -105,6 +105,30 @@
                     {{-- Add hospital field --}}
                     <div class="flex flex-wrap md:flex-nowrap">
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                            <select  id="gender" name="gender" class="block px-8 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" >
+                            @if(!isset($patient))
+                            <option value="" disabled selected> 
+                                {{ __('Select Gender') }}
+                            </option>
+                            @endif
+                            @php
+                                $genders = ['Female','Male'];
+                            @endphp
+                            @foreach ($genders as $key => $value)
+                                <option 
+                                    @if(isset($patient))
+                                        {{ $patient->gender == $key?"selected":"" }}
+                                    @endif
+                                 value="{{ $key }}">{{ __($value) }}</option>
+                            @endforeach
+                            </select>
+                            <label for="gender" class="absolute text-sm text-gray-500 dark:text-gray-400 duration
+                            -300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Gender') }}</label>
+                        </div>
+                       
+                    </div>
+                    <div class="flex flex-wrap md:flex-nowrap">
+                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                             <select type="text" id="hospital" name="hospital_id" class="block px-8 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" >
                             @if(!isset($patient))
                             <option value="" disabled selected> 
@@ -116,7 +140,8 @@
                                 @if(isset($patient))
                                     {{ $patient->hospital->id == $hospital->id?"selected":"" }}
                                 @endif
-                                 value="{{ $hospital->id }}">{{ $hospital->name }}</option>
+                                 value="{{ $hospital->id }}">{{ $hospital->name }}
+                                </option>
                             @endforeach
                             </select>
                             <label for="hospital" class="absolute text-sm text-gray-500 dark:text-gray-400 duration
