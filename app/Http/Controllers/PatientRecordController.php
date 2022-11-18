@@ -46,14 +46,42 @@ class PatientRecordController extends Controller
             $patient_record->record_photo = $filename;
         }
         // wound_image
-        if($request->hasFile('wound_image')){
-            $file = $request->file('wound_image');
+        // if($request->hasFile('wound_image')){
+        //     $file = $request->file('wound_image');
+        //     $filename = time() . '.' . $file->getClientOriginalExtension();
+        //     $file->move(public_path('uploads/patient_records'), $filename);
+        //     $patient_record->wound_image = $filename;
+        // }
+        if($request->hasFile('medication_photo')){
+            $file = $request->file('medication_photo');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/patient_records'), $filename);
-            $patient_record->wound_image = $filename;
+            $patient_record->medication_form = $filename;
         }
         $patient_record->save();
 
+        // supplies used in clinic (no transaction)
+        $supplies_in_clinic_ids = $request->supply_used_in_clinic_id;
+        $supplies_in_clinic_quantities = $request->supply_used_in_clinic_quantity;
+        $supplies_in_clinic_ids = array_combine($supplies_in_clinic_ids, $supplies_in_clinic_quantities);
+        foreach ($supplies_in_clinic_ids as $supply_id => $quantity) {
+            if ($quantity == 0) {
+                continue;
+            }
+            $supply = \App\Models\HospitalSupply::where('supply_id', $supply_id)->where('hospital_id', $patient->hospital->id)->first();
+            if ($supply == null) {
+                $errors[] = __('Supply ":supply" could not be updated. Main stock is not enough', ['supply' => $supply->name]);
+                continue;
+            }
+            $supply->quantity -= $quantity;
+            if ($supply->quantity < 0) {
+                $errors[] = __('Supply ":supply" could not be updated. Main stock is not enough', ['supply' => $supply->name]);
+                continue;
+            }
+            $supply->save();
+        }
+
+        // Supply to patient outside clinic
         $supplies_ids = $request->supply_id;
         $quantities = $request->quantity;
         $supplies_ids = array_combine($supplies_ids, $quantities);
@@ -128,13 +156,45 @@ class PatientRecordController extends Controller
             $file->move(public_path('uploads/patient_records'), $filename);
             $patient_record->record_photo = $filename;
         }
-        if($request->hasFile('wound_image')){
-            $file = $request->file('wound_image');
+        // if($request->hasFile('wound_image')){
+        //     $file = $request->file('wound_image');
+        //     $filename = time() . '.' . $file->getClientOriginalExtension();
+        //     $file->move(public_path('uploads/patient_records'), $filename);
+        //     $patient_record->wound_image = $filename;
+        // }
+
+        if ($request->hasFile('medication_photo')) {
+            $file = $request->file('medication_photo');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/patient_records'), $filename);
-            $patient_record->wound_image = $filename;
+            $patient_record->medication_form = $filename;
         }
+        
         $patient_record->save();
+
+        // supplies used in clinic (no transaction)
+        $supplies_in_clinic_ids = $request->supply_used_in_clinic_id;
+        $supplies_in_clinic_quantities = $request->supply_used_in_clinic_quantity;
+        $supplies_in_clinic_ids = array_combine($supplies_in_clinic_ids, $supplies_in_clinic_quantities);
+        foreach ($supplies_in_clinic_ids as $supply_id => $quantity) {
+            if ($quantity == 0) {
+                continue;
+            }
+            $supply = \App\Models\HospitalSupply::where('supply_id', $supply_id)->where('hospital_id', $patient->hospital->id)->first();
+            if ($supply == null) {
+                $errors[] = __('Supply ":supply" could not be updated. Main stock is not enough', ['supply' => $supply->name]);
+                continue;
+            }
+            $supply->quantity -= $quantity;
+            if ($supply->quantity < 0) {
+                $errors[] = __('Supply ":supply" could not be updated. Main stock is not enough', ['supply' => $supply->name]);
+                continue;
+            }
+            $supply->save();
+        }
+
+
+        // Supply to patient outside clinic
         $supplies_ids = $request->supply_id;
         $quantities = $request->quantity;
         $supplies_ids = array_combine($supplies_ids, $quantities);

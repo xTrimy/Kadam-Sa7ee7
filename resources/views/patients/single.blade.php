@@ -54,6 +54,12 @@
                             {{ __('Download PDF') }}
                         </button>
                     </a>
+                    <a href="{{ route('dashboard.patients.download_patient_field_research',$patient->id) }}">
+                        <button type="button" class="text-white bg-secondary-light hover:bg-secondary-dark focus:ring-4 focus:ring-secondary-light font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 ">
+                            <i class="las la-download"></i>
+                            {{ __('Extract Field Research Data') }}
+                        </button>
+                    </a>
                 @else
                     
                     <button type="button" data-modal-toggle="defaultModal" class="text-white bg-primary-light hover:bg-primary-dark focus:ring-4 focus:ring-primary-light font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 ">
@@ -122,13 +128,16 @@
                     </p>
                     {{-- Get national id photos --}}
                     <div id="images">
-                        <p class="font-bold mt-2">{{ __("National ID Photo (Front)") }}</p>
-                        <div class="w-48 h-48 relative">
-                            <div class="w-full h-full absolute top-0 left-0 bg-black flex justify-center items-center">
-                                <div class="las la-eye text-4xl text-white"></div>
+                        @if($patient->national_id_photo_face)
+                            <p class="font-bold mt-2">{{ __("National ID Photo (Front)") }}</p>
+                            <div class="w-48 h-48 relative">
+                                <div class="w-full h-full absolute top-0 left-0 bg-black flex justify-center items-center">
+                                    <div class="las la-eye text-4xl text-white"></div>
+                                </div>
+                                <img class="w-full h-full object-contain hover:opacity-70 cursor-pointer relative" src="{{ asset('storage/'.$patient->national_id_photo_face) }}" alt="">
                             </div>
-                            <img class="w-full h-full object-contain hover:opacity-70 cursor-pointer relative" src="{{ asset('storage/'.$patient->national_id_photo_face) }}" alt="">
-                        </div>
+                        @endif
+                        @if($patient->national_id_photo_back)
                         <p class="font-bold mt-2">{{ __("National ID Photo (Back)") }}</p>
                         <div class="w-48 h-48 relative">
                             <div class="w-full h-full absolute top-0 left-0 bg-black flex justify-center items-center">
@@ -136,6 +145,16 @@
                             </div>
                             <img class="w-full h-full object-contain hover:opacity-70 cursor-pointer relative" src="{{ asset('storage/'.$patient->national_id_photo_back) }}" alt="">
                         </div>
+                        @endif
+                        @if($patient->social_research)
+                        <p class="font-bold mt-2">{{ __("Social Research Form") }}</p>
+                        <div class="w-48 h-48 relative">
+                            <div class="w-full h-full absolute top-0 left-0 bg-black flex justify-center items-center">
+                                <div class="las la-eye text-4xl text-white"></div>
+                            </div>
+                            <img class="w-full h-full object-contain hover:opacity-70 cursor-pointer relative" src="{{ asset('storage/'.$patient->social_research) }}" alt="">
+                        </div>
+                        @endif
                     </div>
                     <p class="mt-8 text-sm text-gray-600">
                         <b>{{ __('Registration Date') }}</b> : {{ $patient->created_at->format('d/m/Y') }}
@@ -164,6 +183,7 @@
                     "الممرضة" => $record->nurse?$record->nurse->name:null,
                     "تاريخ العملية المحدد" => $record->operation_date?date('d/m/Y',strtotime($record->operation_date)):null,
                     "هل أستلم المريض المستلزمات الطبية؟" => $record->supplied?"نعم":"لا",
+                    "استمارة صرف المسلتزمات الطبية" => $record->medication_form,
                     "هل تم فحص المريض؟" => $record->is_checked?"نعم":"لا",
                     "تم فحص المريض بواسطة الطبيب" => $record->checked_by,
                     "تم تسجيل هذا التقرير بواسطة" => $record->user->name??null,
@@ -177,7 +197,7 @@
                         continue;
                     }
                 @endphp
-                @if ($key == "المرفقات" || $key == "صورة الجرح")
+                @if ($key == "المرفقات" || $key == "صورة الجرح" || $key == "استمارة صرف المسلتزمات الطبية")
                     <div class="mt-2">
                         <p class="font-bold">{{ $key }}</p>
                         <div class="w-48 h-48 relative">

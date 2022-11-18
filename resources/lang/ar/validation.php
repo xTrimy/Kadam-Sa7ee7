@@ -164,6 +164,8 @@ return [
         'patient'               => 'المريض',
         'patient_id'            => 'رقم المريض',
         'hospital_id'           => 'رقم المستشفى',
+        "national_id"           => "الرقم القومي",
+        "birth_date"            => "تاريخ الميلاد",
         'hospital'              => 'المستشفى',
         'email'                 => 'البريد الالكتروني',
         'image'                 => 'الصورة',

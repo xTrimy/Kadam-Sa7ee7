@@ -66,7 +66,7 @@ class HospitalController extends Controller
      */
     public function edit($id)
     {
-        $hospital = Hospital::find($id);
+        $hospital = Hospital::with('availability_times')->find($id);
         return view('hospitals.add', compact('hospital'));
     }
 
@@ -83,7 +83,21 @@ class HospitalController extends Controller
             'name'=>"required|string",
             "address"=>"required|string"
         ]);
+        
         $hospital = Hospital::find($id);
+        if($request->has('day')){
+            $hospital->availability_times()->delete();
+            foreach($request->day as $key => $day){
+                if($day == null || $request->from[$key] == null || $request->to[$key] == null){
+                    continue;
+                }
+                $hospital->availability_times()->create([
+                    'day' => $day,
+                    'start_time' => $request->from[$key],
+                    'end_time' => $request->to[$key]
+                ]);
+            }
+        }
         $hospital->update($request->only(['name', 'address']));
         return redirect()->back()->with('success', __('Hospital updated successfully'));
     }

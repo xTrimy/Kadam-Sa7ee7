@@ -29,4 +29,7 @@ class Hospital extends Model
         return $this->hasMany(Nurse::class);
     }
 
+    public function availability_times(){
+        return $this->hasMany(HospitalAvailabilityTime::class);
+    }
 }

@@ -27,8 +27,9 @@
             <div style="float:right; margin-left: 35%; width: 65%; ">مبادرة قدم صحيح</div>
         </div>
     </htmlpageheader>
+        
     <div class="flex justify-between mb-8">
-       تاريخ تحميل الملف: {{ date('d/m/Y') }}
+        التاريخ: {{ date('d/m/Y') }}
     </div>
     <p>
         ملف المريض:
@@ -46,99 +47,11 @@
     <p>تاريخ تسجيل المريض: {{ $patient->created_at->format('d/m/Y') }}</p>
     <div class="page-break"></div>
         
-        <h1 class="text-center text-3xl mt-8 mb-8">المستلزمات المستخدمة من قبل المريض</h1>
-        <ol>
-        @forelse ($patient->supplies as $supply)
-            <li class="list-decimal">
-                <p class=" mt-2"><b>{{ __("Supply Name") }}</b> : {{ $supply->supply->name }} 
-                    |
-                <span>
-                <b>{{ __("Quantity") }}</b> : {{ $supply->quantity }}
-                </span></p>
-            </li>
-        @empty
-        <li>
-            <p class=" mt-2 text-2xl">{{ __("The patient hasn't used any supplies yet.") }}</p>
-        </li>
-        @endforelse
-        </ol>
-        @if(auth()->user()->hasPermissionTo('Access to console page'))
-            @if(!empty($patient->supplies))
-                @php
-                    // calculate the total cost of the supplies
-                    $totalCost = 0;
-                    foreach($patient->supplies as $supply){
-                        $totalCost += $supply->supply->price * $supply->quantity;
-                    }
-                @endphp
-                <h1 class="text-lg mt-4">إجمالي التكلفة : <span>{{ $totalCost }}</span></h1>
-            @endif
-        @endif
-     @if($patient->records->first())
-        <div class="page-break"></div>
-        
-        <h1 class="text-center text-3xl mt-8 mb-8">تقارير المريض</h1>
-
-        @foreach ($patient->records->reverse() as $record)
-            @php
-                $data = 
-                [
-                    "تاريخ التقرير" => date('d/m/Y',strtotime($record->record_date)),
-                    "نوع التقرير" => $record->record_type,
-                    "وصف التقرير" => $record->record_description,
-                    "الملاحظات" => $record->record_notes,
-                    "المرفقات" => $record->record_photo,
-                    "صورة الجرح" => $record->wound_image,
-                    "الطبيب" => $record->doctor?$record->doctor->name:null,
-                    "الممرضة" => $record->nurse?$record->nurse->name:null,
-                    "تاريخ العملية المحدد" => $record->operation_date?date('d/m/Y',strtotime($record->operation_date)):null,
-                    "هل أستلم المريض المستلزمات الطبية؟" => $record->supplied?"نعم":"لا",
-                    "هل تم فحص المريض؟" => $record->is_checked?"نعم":"لا",
-                    "تم فحص المريض بواسطة الطبيب" => $record->checked_by,
-                    "تم تسجيل هذا التقرير بواسطة" => $record->user->name??null,
-                ]
-                
-            @endphp
-            @foreach ($data as $key=>$value)
-                @php
-                    if($value == null){
-                        continue;
-                    }
-                @endphp
-                @if($key == "المرفقات" || $key == "صورة الجرح")
-                    <div id="images">
-                        <p class="font-bold mt-2">{{ __($key) }}</p>
-                        <img class="w-1/2" src="{{ public_path('uploads/patient_records/').$value }}" alt="">
-                    </div>
-                @else
-                    <p class=" mt-2"><b>{{ $key }}</b> : {{ $value }}</p>
-                @endif
-                
-                    
-            @endforeach
-            @if(count($record->supply_transactions) > 0)
-            <p class="mt-4 text-xl"><b >المستلزمات المستخدمة:</b></p>
-            <ol>
-            @foreach ($record->supply_transactions as $transaction)
-            <li class="list-decimal">
-                <p class=" mt-2"><b>{{ __("Supply Name") }}</b> : {{ $transaction->supply->name }} 
-                    |
-                <span>
-                <b>{{ __("Quantity") }}</b> : {{ $transaction->quantity }}
-                </span></p>
-                
-            </li>
-            @endforeach
-            </ol>
-            @endif
-            <hr class="my-8">
-        @endforeach
-    @endif
     
     @if($patient->field_research->first())
         <div class="page-break"></div>
         
-        <h1 class="text-center text-3xl mt-8 mb-8">البحث الميداني</h1>
+        <h1 class="text-center text-3xl mt-8 mb-8">بيانات البحث الميداني</h1>
 
     @php
         $field_research = $patient->field_research->last();
@@ -178,7 +91,6 @@
             'rating'=>$field_research->rating,
             'evaluation'=>$field_research->evaluation==1?"يستحق المساعدة":"لا يستحق المساعدة",
             'evaluation_comment'=>$field_research->evaluation_comment,
-            'home_photo'=>"<br><img class='w-full' src='".public_path("/storage/".$field_research->home_photo)."'>"
     ];
         
         $locale = 
@@ -274,8 +186,14 @@
             @endif
         @endif
     @endforeach
+    @else
+        <p class="text-center text-red-500">لا يوجد بيانات</p>
     @endif
 
-    
+    <div>
+        <div class="mt-16" >
+            <div>التوقيع:</div>
+        </div>
+    </div>
 </body>
 </html>

@@ -127,7 +127,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                        {{-- <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                             <div class="flex justify-center">
                                 <div class="mb-3 w-full">
                                     <label for="formFile" class="form-label inline-block mb-2 text-gray-700">{{ __('Wound Image') }}</label>
@@ -148,15 +148,16 @@
                                     focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" type="file" id="formFile" name="wound_image" accept=".jpg,.jpeg,.png">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
-                    <div class="flex flex-wrap md:flex-nowrap">
+                    @if ($supplies->where('is_used_in_clinic')->count() > 0)
+                        <div class="flex flex-wrap md:flex-nowrap">
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                             <div class="flex">
-                                <label class="form-label inline-block mb-2 text-gray-700">{{ __('Used supplies') }}</label>
+                                <label class="form-label inline-block mb-2 text-gray-700">{{ __('Used supplies inside clinic') }}</label>
                             </div>
                             <div class="flex mt-4 space-x-4">
-                        @foreach ($supplies as $supply)
+                        @foreach ($supplies->where('is_used_in_clinic') as $supply)
                                 <div class="py-4 px-2 rounded-lg mx-4 border border-primary-light">
                                     <div class=" font-bold">
                                         {{ $supply->name }}
@@ -170,23 +171,85 @@
                                     </p>
                                     <div class="mt-4">
                                         <p>تزويد بكمية:</p>
-                                        <input type="hidden" value="{{ $supply->id }}" name="supply_id[]" >
+                                        <input type="hidden" value="{{ $supply->id }}" name="supply_used_in_clinic_id[]" >
                                         <input type="number" min="0" oninput="
                                             if(this.value > {{ $quantity }})
                                                 this.value = {{ $quantity }};
                                             if(this.value < 0)
                                                 this.value = 0;
-                                        " max="{{ $quantity }}" class="rounded border-gray-300 outline-none" value="0" name="quantity[]">
+                                        " max="{{ $quantity }}" class="rounded border-gray-300 outline-none" value="0" name="supply_used_in_clinic_quantity[]">
                                     </div>
                                 </div>
                         @endforeach
+
                     </div>
                         </div>
                     </div>
+                    @endif
+                    
                     <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
-                        <input type="checkbox" {{ isset($patient_record)?($patient_record->supplied?"checked":""):"" }}  id="supplied" name="supplied"  />
+                        <input class="peer" type="checkbox" {{ isset($patient_record)?($patient_record->supplied?"checked":""):"" }}  id="supplied" name="supplied"  />
                         <label for="supplied">{{ __('Patient received medical supplies?') }}</label>
+                        <div class="hidden peer-checked:block">
+                            <div class="flex flex-wrap md:flex-nowrap">
+                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                            <div class="flex">
+                                <label class="form-label inline-block mb-2 text-gray-700">{{ __('Used supplies') }}</label>
+                            </div>
+                            <div class="flex mt-4 space-x-4">
+                            @foreach ($supplies as $supply)
+                                    <div class="py-4 px-2 rounded-lg mx-4 border border-primary-light">
+                                        <div class=" font-bold">
+                                            {{ $supply->name }}
+                                        </div>
+                                        <p>
+                                            الكمية الحالية في مخزون العيادة: 
+                                            @php
+                                                $quantity = $patient->hospital->supplies()->where('supply_id', $supply->id)->first()->quantity;
+                                            @endphp
+                                            {{ $quantity }}
+                                        </p>
+                                        <div class="mt-4">
+                                            <p>تزويد بكمية:</p>
+                                            <input type="hidden" value="{{ $supply->id }}" name="supply_id[]" >
+                                            <input type="number" min="0" oninput="
+                                                if(this.value > {{ $quantity }})
+                                                    this.value = {{ $quantity }};
+                                                if(this.value < 0)
+                                                    this.value = 0;
+                                            " max="{{ $quantity }}" class="rounded border-gray-300 outline-none" value="0" name="quantity[]">
+                                        </div>
+                                    </div>
+                            @endforeach
                         
+                    </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap md:flex-nowrap">
+                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                            <div class="flex justify-center">
+                                <div class="mb-3 w-full">
+                                    <label for="medication_photo" class="form-label inline-block mb-2 text-gray-700">{{ __('Photo of medication form') }}</label>
+                                    <input class="form-control
+                                    block
+                                    w-full
+                                    px-3
+                                    py-1.5
+                                    text-base
+                                    font-normal
+                                    text-gray-700
+                                    bg-white bg-clip-padding
+                                    border border-solid border-gray-300
+                                    rounded-md
+                                    transition
+                                    ease-in-out
+                                    m-0
+                                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" type="file" id="medication_photo" name="medication_photo" accept=".jpg,.jpeg,.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        </div>
                     </div>
 
                     <div class="mt-8">

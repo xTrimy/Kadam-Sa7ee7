@@ -54,7 +54,7 @@
                             <label for="birthdate" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Birth Date') }}</label>
                         </div>
                     </div>
-                    <div class="flex flex-wrap md:flex-nowrap">
+                    {{-- <div class="flex flex-wrap md:flex-nowrap">
 
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                             <div class="flex justify-center">
@@ -100,8 +100,31 @@
                                 </div>
                             </div>
                         </div>
+                    </div> --}}
+                    <div class="flex flex-wrap md:flex-nowrap">
+                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                            <div class="flex justify-center">
+                                <div class="mb-3 w-full">
+                                    <label for="formFile" class="form-label inline-block mb-2 text-gray-700">{{ __('Social Research Form') }}</label>
+                                    <input class="form-control
+                                    block
+                                    w-full
+                                    px-3
+                                    py-1.5
+                                    text-base
+                                    font-normal
+                                    text-gray-700
+                                    bg-white bg-clip-padding
+                                    border border-solid border-gray-300
+                                    rounded-md
+                                    transition
+                                    ease-in-out
+                                    m-0
+                                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" type="file" id="formFile" accept="image/*" name="social_research">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
                     {{-- Add hospital field --}}
                     <div class="flex flex-wrap md:flex-nowrap">
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">

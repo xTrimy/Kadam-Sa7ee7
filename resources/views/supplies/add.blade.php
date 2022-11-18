@@ -80,6 +80,12 @@
                             </a>
                         </div>
                     </div>
+                    <div class="flex flex-wrap md:flex-nowrap">
+                        <label class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
+                            <input type="checkbox" name="is_used_in_clinic" {{ $supply->is_used_in_clinic?"checked":"" }} >
+                            {{ __('Used in Clinic') }}
+                        </label>
+                    </div>
                     <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                         <button type="submit" class="text-white bg-primary-light hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary-light font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
                             {{ __('Save') }}

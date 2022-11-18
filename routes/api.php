@@ -57,8 +57,12 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::delete('/disease/{id}',[ChronicDiseaseController::class,'delete']);
 
 
-});
+   
 
+});
+Route::get('/test', function () {
+    return request()->all();
+});
 
 Route::post('/register', [AuthController::class, 'register']);
 

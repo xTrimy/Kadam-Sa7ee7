@@ -46,6 +46,7 @@ class SuppliesController extends Controller
         $supply->name = $request->name;
         $supply->supply_category_id = $request->category_id;
         $supply->quantity = $request->quantity;
+        $supply->is_used_in_clinic = $request->is_used_in_clinic ? true : false;
         $supply->price = $request->price;
         $supply->created_by = auth()->user()->id;
         $supply->save();
@@ -95,6 +96,7 @@ class SuppliesController extends Controller
         $supply->name = $request->name;
         $supply->supply_category_id = $request->category_id;
         $supply->quantity = $request->quantity;
+        $supply->is_used_in_clinic = $request->is_used_in_clinic?true:false;
         $supply->price = $request->price;
         $supply->created_by = auth()->user()->id;
         $supply->save();

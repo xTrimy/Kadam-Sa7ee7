@@ -54,6 +54,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::middleware('permission:View patient')->get('/view/{id}', [PatientController::class, 'view_single'])->name('view_single');
         Route::middleware('permission:View patient')->get('/download/{id}', [PatientController::class, 'download_patient_data'])->name('download_data_pdf');
         Route::middleware('permission:View patient')->get('/download_t/{id}', [PatientController::class, 'download_patient_data_t'])->name('download_data_pdf_t');
+        Route::middleware('permission:View patient')->get('/download/{id}/field_research', [PatientController::class, 'download_patient_field_research'])->name('.download_patient_field_research');
         Route::get('/search', [PatientController::class, 'search'])->name('.search');
         Route::middleware('permission:Add patient')->get('/add', [PatientController::class, 'add_national_id'])->name('.create');
         Route::middleware('permission:Add patient')->post('/add', [PatientController::class, 'check_national_id'])->name('.search_id');

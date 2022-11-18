@@ -104,6 +104,7 @@ class PatientController extends Controller
             'hospital_id' => 'required|integer|exists:hospitals,id',
             'chronic_disease' => 'nullable|array',
             'gender' => 'required|boolean',
+            'social_research' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ];
         $request->validate($rules);
 
@@ -150,6 +151,7 @@ class PatientController extends Controller
 
             $patient->national_id_photo_face = $name;
         }
+        
         //national_id_photo_back
         if ($request->hasFile('national_id_photo_back')) {
             $file = $request->file('national_id_photo_back');
@@ -178,6 +180,35 @@ class PatientController extends Controller
             }
 
             $patient->national_id_photo_back = $name;
+        }
+
+        if ($request->hasFile('social_research')) {
+            $file = $request->file('social_research');
+            $name = time() . '_' . $file->getClientOriginalName();
+            //move to storage/
+            Storage::disk('public')->put($name, file_get_contents($file));
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizerChain->optimize(storage_path('app/public/') . $name);
+
+            //if image is larger than 500×500, resize it to 500×500 andkeep the aspect ratio
+            $image = imagecreatefromjpeg(storage_path('app/public/') . $name);
+            $width = imagesx($image);
+            $height = imagesy($image);
+            if ($width > 500 || $height > 500) {
+                $new_width = 500;
+                $new_height = 500;
+                //keep aspect ratio
+                if ($width > $height) {
+                    $new_height = $height * ($new_width / $width);
+                } else {
+                    $new_width = $width * ($new_height / $height);
+                }
+                $new_image = imagecreatetruecolor($new_width, $new_height);
+                imagecopyresampled($new_image, $image, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+                imagejpeg($new_image, storage_path('app/public/') . $name);
+            }
+
+            $patient->social_research = $name;
         }
         $patient->save();
 
@@ -490,7 +521,6 @@ class PatientController extends Controller
     }
 
     public function download_patient_data($id){
-        ini_set('memory_limit', '-1');
         $patient =  Patient::with([
             'field_research.governorate',
             'field_research.marital_status',
@@ -507,7 +537,7 @@ class PatientController extends Controller
         }
         $inputs = FieldResearchInput::all();
         $pdf = \PDF::loadView('pdf.patient-report', ['patient' => $patient, 'inputs' => $inputs]);
-        return $pdf->download("patient-report-$id.pdf");
+        return $pdf->download("ملف المريض ({$patient->name}).pdf");
     }
 
     public function download_patient_data_t($id)
@@ -515,5 +545,23 @@ class PatientController extends Controller
         $inputs = FieldResearchInput::all();
         $patient =  Patient::with(['field_research.governorate', 'field_research.marital_status', 'field_research.educational_level','chronic_diseases','hospital','records.user'])->find($id);
         return view('pdf.patient-report', compact('patient','inputs'));
+    }
+
+    public function download_patient_field_research($id)
+    {
+        $patient =  Patient::with([
+            'field_research.governorate',
+            'field_research.marital_status',
+            'field_research.educational_level',
+            'chronic_diseases',
+        ])->find($id);
+        if (!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('manager')) {
+            if ($patient->hospital_id != auth()->user()->hospitals()->first()->id) {
+                return redirect()->back()->with('error', __('You are not authorized to download this patient data'));
+            }
+        }
+        $inputs = FieldResearchInput::all();
+        $pdf = \PDF::loadView('pdf.field-research', ['patient' => $patient, 'inputs' => $inputs]);
+        return $pdf->download("بيانات البحث الميداني ({$patient->name}).pdf");
     }
 }

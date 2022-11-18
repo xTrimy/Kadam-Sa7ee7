@@ -979,5 +979,22 @@
     "Slider Images Updated Successfully":"تم تحديث صور السلايدر بنجاح",
     "Insights Bar":"شريط الإحصائيات",
     "Number":"العدد",
-    "Insights Bar Updated Successfully":"تم تحديث شريط الإحصائيات بنجاح"
+    "Insights Bar Updated Successfully":"تم تحديث شريط الإحصائيات بنجاح",
+    "Edit Hospital":"تعديل المستشفى",
+    "Clinic available times":"مواعيد العيادات",
+    "Day":"اليوم",
+    "Saturday":"السبت",
+    "Sunday":"الأحد",
+    "Monday":"الأثنين",
+    "Tuesday":"الثلاثاء",
+    "Wednesday":"الأربعاء",
+    "Thursday":"الخميس",
+    "Friday":"الجمعة",
+    "Available from":"متاح من",
+    "Available to":"متاح إلى",
+    "Used in Clinic":"يتم استخدامه في العيادة",
+    "Used supplies inside clinic":"المستلزمات المستخدمة داخل العيادة",
+    "Extract Field Research Data":"استخراج بيانات البحث الميداني",
+    "Photo of medication form":"صورة بيان صرف المسلتزمات الطبية",
+    "Social Research Form":"استمارة البحث الاجتماعي"
 }
