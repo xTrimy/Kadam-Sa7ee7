@@ -82,7 +82,11 @@
                     </div>
                     <div class="flex flex-wrap md:flex-nowrap">
                         <label class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
-                            <input type="checkbox" name="is_used_in_clinic" {{ $supply->is_used_in_clinic?"checked":"" }} >
+                            <input type="checkbox" name="is_used_in_clinic" {{ 
+                            if(isset($supply)){
+                                $supply->is_used_in_clinic?"checked":""
+                            }
+                                 }} >
                             {{ __('Used in Clinic') }}
                         </label>
                     </div>

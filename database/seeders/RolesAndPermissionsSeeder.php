@@ -115,7 +115,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $coordinator_role->givePermissionTo($add_patient_report);
         $coordinator_role->givePermissionTo($view_patient_report);
         $coordinator_role->givePermissionTo($delete_patient_report);
-        $coordinator_role->givePermissionTo($add_supplies);
+        
         $coordinator_role->givePermissionTo($view_hospital);
         $coordinator_role->givePermissionTo($view_contact_forms);
         $coordinator_role->givePermissionTo($view_activity_logs);
