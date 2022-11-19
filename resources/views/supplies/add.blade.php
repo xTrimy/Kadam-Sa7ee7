@@ -87,6 +87,7 @@
                                 @if($supply->is_used_in_clinic == 1)
                                     checked
                                 @endif
+                            @endif
                            >
                             {{ __('Used in Clinic') }}
                         </label>
