@@ -74,26 +74,67 @@
                     </div>
                     <div class="flex flex-wrap md:flex-nowrap">
                      <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
-                            <select name="doctor_id" id="" class="block pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer">
+                            <select name="doctor_id" id="doctor_id" class="block pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer">
                                 <option value="">{{ __('Select Doctor') }}</option>
                                 @foreach ($doctors as $doctor)
                                     <option value="{{ $doctor->id }}" {{ (isset($patient_record)?($patient_record->doctor_id==$doctor->id?"selected":""):"") }}>{{ $doctor->name }}</option>
                                 @endforeach
+                                <option value="extra">
+                                    اخرى تذكر
+                                </option>
                             </select>
                             <label for="checked_by" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Checked By (Doctor Name)') }}</label>
                         </div>
-
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
-                            <select name="nurse_id" id="" class="block pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer">
+                            <select name="nurse_id" id="nurse_id" class="block pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer">
                                 <option value="">{{ __('Select Nurse') }}</option>
                                 @foreach ($nurses as $nurse)
                                     <option value="{{ $nurse->id }}" {{ (isset($patient_record)?($patient_record->nurse_id==$nurse->id?"selected":""):"") }}>{{ $nurse->name }}</option>
                                 @endforeach
+                                <option value="extra">
+                                    اخرى تذكر
+                                </option>
                             </select>
                             <label for="checked_by" class="absolute text-sm text-gray-500 dark:text-gray-400 duration
                             transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Checked By (Nurse Name)') }}</label>
                         </div>
                     </div>
+                    <div id="extra-inputs" class="flex flex-wrap md:flex-nowrap hidden">
+                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4 hidden">
+                            <input value="" type="text" id="extra_doctor_name" name="extra_doctor_name" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                            <label for="extra_doctor_name" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Doctor Name') }}</label>
+                        </div>
+                        <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4 ">
+                            <input type="text" value="" id="extra_nurse_name" name="extra_nurse_name" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                            <label for="extra_nurse_name" class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:right-1 ltr:left-1">{{ __('Nurse Name') }}</label>
+                        </div>
+                    </div>
+                    <script>
+                        // don't use jquery
+                        document.querySelector('#doctor_id').addEventListener('change', function(e) {
+                            if (e.target.value == 'extra') {
+                                document.querySelector('#extra-inputs').classList.remove('hidden');
+                                document.querySelector('#extra_doctor_name').parentElement.classList.remove('hidden');
+                            } else {
+                                if( document.querySelector('#nurse_id').value != 'extra' ){
+                                    document.querySelector('#extra-inputs').classList.add('hidden');
+                                }
+                                document.querySelector('#extra_doctor_name').parentElement.classList.add('hidden');
+                            }
+                        });
+                        document.querySelector('#nurse_id').addEventListener('change', function(e) {
+                            if (e.target.value == 'extra') {
+                                document.querySelector('#extra-inputs').classList.remove('hidden');
+                                document.querySelector('#extra_nurse_name').parentElement.classList.remove('hidden');
+                            } else {
+                                if( document.querySelector('#doctor_id').value != 'extra' ){
+                                    document.querySelector('#extra-inputs').classList.add('hidden');
+                                }
+                                document.querySelector('#extra_nurse_name').parentElement.classList.add('hidden');
+                            }
+                        });
+                    </script>
+
                     <div class="flex flex-wrap md:flex-nowrap">
                         <div class="relative  w-full md:flex-auto md:w-auto mx-4 mt-4">
                             <input type="text" id="record_notes" value="{{ $patient_record->record_notes??"" }}" name="record_notes" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"  placeholder=" " />

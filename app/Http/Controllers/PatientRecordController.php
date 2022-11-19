@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Doctor;
+use App\Models\Nurse;
 use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\Supply;
@@ -35,8 +37,23 @@ class PatientRecordController extends Controller
         $patient_record->record_notes = $request->record_notes??null;
         $patient_record->operation_date = $request->operation_date? date('Y-m-d',strtotime($request->operation_date)):null;
         $patient_record->patient_id = $id;
-        $patient_record->doctor_id = $request->doctor_id??null;
-        $patient_record->nurse_id = $request->nurse_id??null;
+        $patient_record->doctor_id = $request->doctor_id ?? null;
+        if ($request->extra_doctor_name != null && $request->extra_doctor_name != '') {
+            $doctor = new Doctor();
+            $doctor->name = $request->extra_doctor_name;
+            $doctor->hospital_id = $patient->hospital->id;
+            $doctor->save();
+            $patient_record->doctor_id = $doctor->id;
+        }
+
+        $patient_record->nurse_id = $request->nurse_id ?? null;
+        if ($request->extra_nurse_name != null && $request->extra_nurse_name != '') {
+            $nurse = new Nurse();
+            $nurse->name = $request->extra_nurse_name;
+            $nurse->hospital_id = $patient->hospital->id;
+            $nurse->save();
+            $patient_record->nurse_id = $nurse->id;
+        }
         $patient_record->created_by = auth()->user()->id;
         // record_photo
         if($request->hasFile('record_photo')){
@@ -143,8 +160,24 @@ class PatientRecordController extends Controller
         $patient_record->is_checked = $request->is_checked?1:0;
         $patient_record->supplied = $request->supplied?1:0;
         // $patient_record->checked_by = $request->checked_by??null;
-        $patient_record->doctor_id = $request->doctor_id??null;
+
+        $patient_record->doctor_id = $request->doctor_id ?? null;
+        if ($request->extra_doctor_name != null && $request->extra_doctor_name != ''){
+            $doctor = new Doctor();
+            $doctor->name = $request->extra_doctor_name;
+            $doctor->hospital_id = $patient->hospital->id;
+            $doctor->save();
+            $patient_record->doctor_id = $doctor->id;
+        }
+
         $patient_record->nurse_id = $request->nurse_id??null;
+        if ($request->extra_nurse_name != null && $request->extra_nurse_name != ''){
+            $nurse = new Nurse();
+            $nurse->name = $request->extra_nurse_name;
+            $nurse->hospital_id = $patient->hospital->id;
+            $nurse->save();
+            $patient_record->nurse_id = $nurse->id;
+        }
         $patient_record->record_notes = $request->record_notes??null;
         $patient_record->operation_date = $request->operation_date? date('Y-m-d',strtotime($request->operation_date)):null;
         $patient_record->patient_id = $id;

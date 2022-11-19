@@ -18,6 +18,9 @@
             header: page-header;
 	        footer: page-footer;
         }
+         body{
+            font-family: 'XB Riyaz', sans-serif;
+        }
     </style>
 </head>
 <body class="mx-8">
