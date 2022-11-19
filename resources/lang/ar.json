@@ -996,5 +996,7 @@
     "Used supplies inside clinic":"المستلزمات المستخدمة داخل العيادة",
     "Extract Field Research Data":"استخراج بيانات البحث الميداني",
     "Photo of medication form":"صورة بيان صرف المسلتزمات الطبية",
-    "Social Research Form":"استمارة البحث الاجتماعي"
+    "Social Research Form":"استمارة البحث الاجتماعي",
+    "Patient :patient has been transfered to :hospital instead of :old_hospital":"تم تحويل المريض :patient إلى :hospital بدلا من :old_hospital",
+    "The transfer was done by :user":"تم التحويل من قبل :user"
 }

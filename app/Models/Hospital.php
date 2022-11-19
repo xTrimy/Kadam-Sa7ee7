@@ -32,4 +32,8 @@ class Hospital extends Model
     public function availability_times(){
         return $this->hasMany(HospitalAvailabilityTime::class);
     }
+
+    public function users(){
+        return $this->belongsToMany(User::class,"user_hospital");
+    }
 }

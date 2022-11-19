@@ -76,10 +76,11 @@
                         <a href="{{ route('dashboard.hospitals.edit',$hospital->id) }}">
                         <div class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Edit') }}</div>
                         </a>
-                        <a href="{{ route('dashboard.supplies.transfer',['type'=>'hospital','id'=>$hospital->id]) }}">
-                        <div class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Transfer Supplies') }}</div>
-                        </a>
-
+                        @if(auth()->user()->hasPermissionTo('Add supplies'))
+                            <a href="{{ route('dashboard.supplies.transfer',['type'=>'hospital','id'=>$hospital->id]) }}">
+                            <div class="text-center font-medium px-4 py-2 border-primary-dark border rounded-full whitespace-nowrap text-primary-dark hover:text-white hover:bg-primary-light hover:border-primary-light mx-2 dark:text-blue-500 hover:underline">{{ __('Transfer Supplies') }}</div>
+                            </a>
+                        @endif
                     </div>
                 </td>
             </tr>

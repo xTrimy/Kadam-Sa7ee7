@@ -21,9 +21,11 @@
                     <x-nav-link :href="route('dashboard.hospitals')" :active="request()->routeIs('dashboard.hospitals')">
                         {{ __('Hospitals') }}
                     </x-nav-link>
+                    @if(auth()->user()->hasPermissionTo('Add supplies'))
                     <x-nav-link :href="route('dashboard.supplies')" :active="request()->routeIs('dashboard.supplies')">
                         {{ __('Supplies') }}
                     </x-nav-link>
+                    @endif
                     <x-nav-link :href="route('dashboard.users')" :active="request()->routeIs('dashboard.users')">
                         {{ __('Users') }}
                     </x-nav-link>

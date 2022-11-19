@@ -1,3 +1,7 @@
+@php
+    app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" {{ app()->getLocale()=="ar"?"dir=rtl":'' }}>
     <head>

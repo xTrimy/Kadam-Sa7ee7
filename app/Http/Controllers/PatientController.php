@@ -7,8 +7,10 @@ use App\Models\FieldResearchInput;
 use App\Models\Hospital;
 use App\Models\Patient;
 use App\Models\User;
+use App\Notifications\PatientTransferNotification;
 use App\Notifications\PatientTransferRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
@@ -260,7 +262,15 @@ class PatientController extends Controller
         $patient->birth_date = date('Y-m-d', strtotime($request->birth_date));
         $patient->national_id_photo_face = $request->national_id_photo_face ?? null;
         $patient->national_id_photo_back = $request->national_id_photo_back ?? null;
-        $patient->hospital_id = $request->hospital_id;
+        if($request->hospital_id != $patient->hospital_id){
+            $old_hospital = Hospital::find($patient->hospital_id);
+            $patient->hospital_id = $request->hospital_id;
+            $users = Hospital::find($request->hospital_id)->users()->get();
+            $new_hospital = Hospital::find($request->hospital_id);
+            foreach($users as $user){
+                $user->notify(new PatientTransferNotification($patient,$old_hospital, $new_hospital,Auth::user()));
+            }
+        }
         $patient->save();
         //national_id_photo_face
         if ($request->hasFile('national_id_photo_face')) {
