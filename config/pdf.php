@@ -7,7 +7,12 @@ return [
 			'R'  => 'Cairo Bold 700.ttf',    // regular font
 			'useOTL' => 0xFF,    // required for complicated langs like Persian, Arabic and Chinese
 			'useKashida' => 75,  // required for complicated langs like Persian, Arabic and Chinese
-		]
+		],
+		'XB Riyaz' => [
+			'R'  => 'XB Riyaz.ttf',    // regular font
+			'useOTL' => 0xFF,    // required for complicated langs like Persian, Arabic and Chinese
+			'useKashida' => 75,  // required for complicated langs like Persian, Arabic and Chinese
+		],
 	],
 	'mode'                  => 'utf-8',
 	'format'                => 'A4',
