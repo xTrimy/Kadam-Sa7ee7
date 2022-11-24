@@ -197,7 +197,7 @@
                             <div class="flex">
                                 <label class="form-label inline-block mb-2 text-gray-700">{{ __('Used supplies inside clinic') }}</label>
                             </div>
-                            <div class="flex mt-4 space-x-4">
+                            <div class="flex mt-4 flex-wrap space-x-4">
                         @foreach ($supplies->where('is_used_in_clinic') as $supply)
                                 <div class="py-4 px-2 rounded-lg mx-4 border border-primary-light">
                                     <div class=" font-bold">
@@ -238,7 +238,7 @@
                             <div class="flex">
                                 <label class="form-label inline-block mb-2 text-gray-700">{{ __('Used supplies') }}</label>
                             </div>
-                            <div class="flex mt-4 space-x-4">
+                            <div class="flex mt-4 flex-wrap space-x-4">
                             @foreach ($supplies as $supply)
                                     <div class="py-4 px-2 rounded-lg mx-4 border border-primary-light">
                                         <div class=" font-bold">
