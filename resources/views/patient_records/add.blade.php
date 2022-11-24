@@ -248,7 +248,7 @@
                                             الكمية الحالية في مخزون العيادة: 
                                             @php
                                                 $supply_x = $patient->hospital->supplies()->where('supply_id', $supply->id)->first();
-                                                $quantity =  $supply_x ? $supply_x->pivot->quantity : 0;
+                                                $quantity =  $supply_x ? $supply_x->quantity : 0;
                                             @endphp
                                             {{ $quantity }}
                                         </p>
