@@ -3,6 +3,7 @@
 use App\Http\Controllers\HospitalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DoctorController;
+use App\Http\Controllers\LogsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NurseController;
 use App\Http\Controllers\PatientController;
@@ -48,6 +49,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         });
         Route::get('/field_research',[PatientFieldResearchController::class,'field_settings'])->name('.field_research');
         Route::post('/field_research',[PatientFieldResearchController::class,'field_settings_store']);
+        Route::get('/logs',[LogsController::class, 'index'])->name('.logs');
     });
     Route::prefix('/patients')->as('.patients')->group(function(){
         Route::middleware('permission:View patient')->get('/', [PatientController::class, 'index']);
@@ -127,6 +129,7 @@ Route::middleware('auth')->prefix('/dashboard')->as('dashboard')->group(function
         Route::middleware('permission:Edit nurse')->put('/{id}/edit', [NurseController::class, 'update'])->name('.update');
         Route::middleware('permission:Delete nurse')->delete('/{id}/delete', [NurseController::class, 'delete'])->name('.delete');
     });
+
 });
 Route::get('/test-import', [TestImportController::class, 'import']);
 Route::post('/test-import', [TestImportController::class, 'toPdf']);

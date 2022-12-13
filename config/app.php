@@ -178,7 +178,9 @@ return [
         niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
 
         Spatie\Permission\PermissionServiceProvider::class,
+        Spatie\Activitylog\ActivitylogServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Jenssegers\Agent\AgentServiceProvider::class,
 
 
     ],
@@ -238,6 +240,8 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'PDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
+
     ],
 
 ];

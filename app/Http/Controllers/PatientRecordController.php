@@ -7,7 +7,9 @@ use App\Models\Nurse;
 use App\Models\Patient;
 use App\Models\PatientRecord;
 use App\Models\Supply;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class PatientRecordController extends Controller
 {
@@ -133,7 +135,13 @@ class PatientRecordController extends Controller
             $transaction->patient_record_id = $patient_record->id;
             $transaction->save();
         }
-        
+        // check difference between created_at and record_date
+        $diff = $patient_record->created_at->diffInDays($patient_record->record_date);
+        if ($diff > 0) {
+            // notify admin that it is not the same day
+            $admins = User::role('admin')->get();
+            Notification::send($admins, new \App\Notifications\RecordDateNotSameAsCreatedDate($patient_record,auth()->user()));
+        }
         
         return redirect()->back()->with(['success'=>__('Record added successfully'), 'supply_errors'=>$errors]);
     }

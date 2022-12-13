@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Spatie\Activitylog\Traits\LogsActivity;
 class PatientRecord extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
     protected $fillable = [
         'record_type',
         'record_date',
@@ -21,7 +21,7 @@ class PatientRecord extends Model
     ];
 
     public function user(){
-        return $this->belongsTo(User::class, 'checked_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function patient(){

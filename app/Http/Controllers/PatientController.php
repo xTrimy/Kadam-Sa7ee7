@@ -35,6 +35,26 @@ class PatientController extends Controller
     }
     public function view_single($id){
         $patient = Patient::with(['chronic_diseases','hospital','user'])->findOrFail($id);
+        $is_discontinued = $patient->is_discontinued;
+        // check is discontinued by calculating last patient record date
+        if($is_discontinued == false){
+            $last_patient_record = $patient->records()->orderBy('created_at','desc')->first();
+            if($last_patient_record){
+                $last_patient_record_date = $last_patient_record->created_at;
+                $is_discontinued = $last_patient_record_date->diffInDays(now()) > 60;
+                if($is_discontinued){
+                    $patient->is_discontinued = true;
+                    $patient->save();
+                }
+            }else{
+                // check if patient created date is more than 5 days
+                $is_discontinued = $patient->created_at->diffInDays(now()) > 60;
+                if($is_discontinued){
+                    $patient->is_discontinued = true;
+                    $patient->save();
+                }
+            }
+        }
         return view('patients.single',compact('patient'));
     }
     public function add_national_id(){

@@ -998,5 +998,16 @@
     "Photo of medication form":"صورة بيان صرف المسلتزمات الطبية",
     "Social Research Form":"استمارة البحث الاجتماعي",
     "Patient :patient has been transfered to :hospital instead of :old_hospital":"تم تحويل المريض :patient إلى :hospital بدلا من :old_hospital",
-    "The transfer was done by :user":"تم التحويل من قبل :user"
+    "The transfer was done by :user":"تم التحويل من قبل :user",
+    "Cured":"تم الشفاء",
+    "Discontinued":"منقطع",
+    "Status":"الحالة",
+    "Alert for late patient record for patient :patient":"تنبيه لتأخر تقرير المريض :patient",
+    ":causer created":"قام :causer بإنشاء",
+    ":causer updated":"قام :causer بتحديث",
+    "HospitalAvailabilityTime":"مواعيد العيادات",
+    "Hospital":"المستشفى",
+    "LoginLogger":"سجلات تسجيل الدخول",
+    "Audit Log":"سجلات الأداء"
+
 }

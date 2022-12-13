@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Spatie\Activitylog\Traits\LogsActivity;
 class Patient extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
     public function chronic_diseases()
     {
         return $this->belongsToMany(ChronicDisease::class, 'patient_chronic_disease')->select('name');

@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Jenssegers\Agent\Facades\Agent;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,9 +30,16 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $request->authenticate();
-
+        $login_logger = new \App\Models\LoginLogger();
+        $login_logger->user_id = Auth::user()->id;
+        $login_logger->ip_address = $request->ip();
+        $login_logger->user_agent = $request->userAgent();
+        $login_logger->device = Agent::device();
+        $login_logger->os = Agent::platform();
+        $login_logger->browser = Agent::browser();
+        $login_logger->save();
         $request->session()->regenerate();
-
+      
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

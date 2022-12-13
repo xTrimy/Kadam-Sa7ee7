@@ -126,6 +126,15 @@
                     <p class="mt-2">
                         <b>{{ __('Address') }}</b> : {{ $patient->address }}
                     </p>
+                    @if($patient->is_cured)
+                        <p class="mt-2">
+                            <b>{{ __('Status') }}</b> : <span class="text-green-500">{{ __('Cured') }}</span>
+                        </p>
+                    @elseif($patient->is_discontinued)
+                        <p class="mt-2">
+                            <b>{{ __('Status') }}</b> : <span class="text-red-500">{{ __('Discontinued') }}</span>
+                        </p>
+                    @endif                        
                     {{-- Get national id photos --}}
                     <div id="images">
                         @if($patient->national_id_photo_face)
@@ -187,9 +196,20 @@
                     "هل تم فحص المريض؟" => $record->is_checked?"نعم":"لا",
                     "تم فحص المريض بواسطة الطبيب" => $record->checked_by,
                     "تم تسجيل هذا التقرير بواسطة" => $record->user->name??null,
-                ]
-                
+                ];
+                if($record->created_at)
+                    $diff = $record->created_at->diffInDays($record->record_date);
+                else
+                    $diff = 0;
             @endphp
+            {{-- display created at --}}
+            <div class="mt-8">
+                @if($record->created_at )
+                <p class="text-sm {{ $diff>0?"text-red-500":"text-gray-600" }} ">
+                    <b>تاريخ التسجيل</b> : {{ $record->created_at->format('d/m/Y') }}
+                </p>
+                @endif
+            </div>
             <div id="imagex-{{ $record->id }}">
             @foreach ($data as $key=>$value)
                 @php

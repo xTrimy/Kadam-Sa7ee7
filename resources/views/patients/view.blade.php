@@ -41,8 +41,7 @@
             <tr>
                 <th scope="col" class="p-4">
                     <div class="flex items-center">
-                        <input id="checkbox-all-search" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="checkbox-all-search" class="sr-only">checkbox</label>
+             
                     </div>
                 </th>
                 <th scope="col" class="py-3 px-6">
@@ -68,11 +67,32 @@
         </thead>
         <tbody>
             @foreach ($patients as $patient)
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            @php
+                $is_discontinued = $patient->is_discontinued;
+                // check is discontinued by calculating last patient record date
+                if($is_discontinued == false){
+                    $last_patient_record = $patient->records()->orderBy('created_at','desc')->first();
+                    if($last_patient_record){
+                        $last_patient_record_date = $last_patient_record->created_at;
+                        $is_discontinued = $last_patient_record_date->diffInDays(now()) > 60;
+                        if($is_discontinued){
+                            $patient->is_discontinued = true;
+                            $patient->save();
+                        }
+                    }else{
+                        // check if patient created date is more than 5 days
+                        $is_discontinued = $patient->created_at->diffInDays(now()) > 5;
+                        if($is_discontinued){
+                            $patient->is_discontinued = true;
+                            $patient->save();
+                        }
+                    }
+                }
+            @endphp
+            <tr class="{{ $patient->is_cured?"bg-green-200 hover:bg-green-300":($patient->is_discontinued?"bg-red-200 hover:bg-red-300":"bg-white hover:bg-gray-50") }} border-b dark:bg-gray-800 dark:border-gray-700  dark:hover:bg-gray-600">
                 <td class="p-4 w-4">
                     <div class="flex items-center">
-                        <input id="checkbox-table-search-1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
+                        {{ $patient->is_cured?"✅":($patient->is_discontinued?"🚫":"") }}
                     </div>
                 </td>
                 <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
