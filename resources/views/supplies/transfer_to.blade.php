@@ -50,9 +50,9 @@
                             {{ __('Supplies') }}
                         </div>
                     </div>
-                    <div class="flex mt-4 space-x-4 space-y-4 flex-wrap">
+                    <div class="flex mt-4 flex-wrap">
                         @foreach ($supplies as $supply)
-                                <div class="py-4 px-2 rounded-lg mx-4 border border-primary-light">
+                                <div class="py-4 px-2 rounded-lg m-4 border border-primary-light">
                                     <div class=" font-bold">
                                         {{ $supply->name }}
                                     </div>
